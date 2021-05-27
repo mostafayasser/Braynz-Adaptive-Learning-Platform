@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/conceptsViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
-import 'package:graduation_project/views/conceptsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
@@ -33,11 +32,7 @@ class FinalTestView extends StatelessWidget {
                           ...List.generate(
                             model.finalTest.numOfQuestions,
                             (index) => QuestionItem(
-                              answers: model.finalTest.questions[index].answers,
-                              quiestion:
-                                  model.finalTest.questions[index].question,
-                              correctAnswer:
-                                  model.finalTest.questions[index].answer,
+                              question: model.finalTest.questions[index],
                               onSelect: (answer) =>
                                   model.selectFinalTestAnswer(answer, index),
                             ),
@@ -45,11 +40,11 @@ class FinalTestView extends StatelessWidget {
                           RaisedButton(
                             onPressed: () {
                               model.calculateFinalTestScore();
-                              Navigator.of(context).pushReplacement(
+                              /* Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                   builder: (context) => ConceptsView(),
                                 ),
-                              );
+                              ); */
                             },
                             child: Text("Submit"),
                           )

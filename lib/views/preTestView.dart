@@ -35,11 +35,7 @@ class PreTestView extends StatelessWidget {
                           ...List.generate(
                             model.preTest.numOfQuestions,
                             (index) => QuestionItem(
-                              answers: model.preTest.questions[index].answers,
-                              quiestion:
-                                  model.preTest.questions[index].question,
-                              correctAnswer:
-                                  model.preTest.questions[index].answer,
+                              question: model.preTest.questions[index],
                               onSelect: (answer) =>
                                   model.selectPreTestAnswer(answer, index),
                             ),

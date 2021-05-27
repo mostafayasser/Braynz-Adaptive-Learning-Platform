@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_project/models/question.dart';
 
 class QuestionItem extends StatefulWidget {
-  final quiestion, answers, onSelect, correctAnswer;
+  final Question question;
+  final Function onSelect;
 
-  const QuestionItem(
-      {Key key,
-      this.quiestion,
-      this.answers,
-      this.onSelect,
-      this.correctAnswer})
-      : super(key: key);
+  const QuestionItem({
+    Key key,
+    this.question,
+    this.onSelect,
+  }) : super(key: key);
   @override
   _QuestionItemState createState() => _QuestionItemState();
 }
@@ -26,15 +26,20 @@ class _QuestionItemState extends State<QuestionItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.quiestion),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.question.question),
+            ],
+          ),
           ...List.generate(
-              widget.answers.length,
+              widget.question.answers.length,
               (index) => RadioListTile(
-                    title: Text(widget.answers[index]),
+                    title: Text(widget.question.answers[index]),
                     value: index,
                     groupValue: val,
                     onChanged: (value) {
-                      if (index == widget.correctAnswer)
+                      if (index == widget.question.answer)
                         widget.onSelect(true);
                       else
                         widget.onSelect(false);

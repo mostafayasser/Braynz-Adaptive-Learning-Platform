@@ -72,6 +72,12 @@ class TopicsView extends StatelessWidget {
                                         user: model.auth.user);
                                     model.auth.setUser(user: user);
                                   }
+                                  User user = await model.api.startTopicTime(
+                                    topicID:
+                                        TopicsViewController.topics[index].id,
+                                    user: model.auth.user,
+                                  );
+                                  model.auth.setUser(user: user);
                                   Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => SkipPreTestView(
                                       preTestID: TopicsViewController

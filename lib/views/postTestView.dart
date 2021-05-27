@@ -1,6 +1,7 @@
 import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/topicsViewController.dart';
+import 'package:graduation_project/models/user.dart';
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
 import 'package:graduation_project/views/topicsView.dart';
@@ -35,11 +36,7 @@ class PostTestView extends StatelessWidget {
                           ...List.generate(
                             model.postTest.numOfQuestions,
                             (index) => QuestionItem(
-                              answers: model.postTest.questions[index].answers,
-                              quiestion:
-                                  model.postTest.questions[index].question,
-                              correctAnswer:
-                                  model.postTest.questions[index].answer,
+                              question: model.postTest.questions[index],
                               onSelect: (answer) =>
                                   model.selectPostTestAnswer(answer, index),
                             ),
@@ -47,6 +44,12 @@ class PostTestView extends StatelessWidget {
                           RaisedButton(
                             onPressed: () {
                               model.calculatePostTestScore();
+                              User user = model.api.startTopicTime(
+                                topicID: TopicsViewController
+                                    .topics[TopicsViewController.topicIndex].id,
+                                user: model.auth.user,
+                              );
+                              model.auth.setUser(user: user);
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => TopicsView(

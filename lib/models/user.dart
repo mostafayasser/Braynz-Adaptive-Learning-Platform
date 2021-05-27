@@ -89,7 +89,7 @@ class UserTopic {
     this.id,
     this.endDateTime,
     this.startDateTime,
-    this.idleTimeInHours,
+    this.idleTimeInMinutes,
     this.preTestScore,
     this.preTestAttempts,
     this.postTestScore,
@@ -100,7 +100,7 @@ class UserTopic {
   int id;
   DateTime endDateTime;
   DateTime startDateTime;
-  int idleTimeInHours;
+  int idleTimeInMinutes;
   int preTestScore;
   int preTestAttempts;
   int postTestScore;
@@ -113,7 +113,7 @@ class UserTopic {
             new DateTime.fromMicrosecondsSinceEpoch(json["endDateTime"]),
         startDateTime:
             new DateTime.fromMicrosecondsSinceEpoch(json["startDateTime"]),
-        idleTimeInHours: json["idleTimeInHours"],
+        idleTimeInMinutes: json["idleTimeInMinutes"].toInt(),
         preTestScore: json["preTestScore"],
         preTestAttempts: json["preTestAttempts"],
         postTestScore: json["postTestScore"],
@@ -125,7 +125,7 @@ class UserTopic {
         "id": id,
         "endDateTime": endDateTime.millisecondsSinceEpoch,
         "startDateTime": startDateTime.millisecondsSinceEpoch,
-        "idleTimeInHours": idleTimeInHours,
+        "idleTimeInMinutes": idleTimeInMinutes,
         "preTestScore": preTestScore,
         "preTestAttempts": preTestAttempts,
         "postTestScore": postTestScore,

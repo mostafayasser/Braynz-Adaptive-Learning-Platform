@@ -49,5 +49,38 @@ class ConceptsViewController extends BaseNotifier {
         user: auth.user,
       ),
     );
+    calculateEachTopicScore();
+  }
+
+  calculateEachTopicScore() {
+    List<Map<String, List<bool>>> topicsList = [];
+    List<String> reviseTopics = [];
+    for (int i = 0; i < currentConcept.topics.length; i++) {
+      List<bool> answers = [];
+      String topicName = "";
+      for (int j = 0; j < finalTest.numOfQuestions; j++) {
+        if (finalTest.questions[j].topicID == currentConcept.topics[i]) {
+          answers.add(finalTestAnswers[j]);
+          topicName = finalTest.questions[j].topicName;
+        }
+      }
+
+      topicsList.add({topicName: answers});
+    }
+    topicsList.forEach((element) {
+      int score = 0;
+      element.values.forEach((value) {
+        value.forEach((v) {
+          if (!v) score++;
+        });
+      });
+      if (score >= 2) reviseTopics.add(element.keys.first);
+    });
+    if (reviseTopics.isNotEmpty) {
+      print("You need to revise the following topics: ");
+      reviseTopics.forEach((element) {
+        print(element);
+      });
+    }
   }
 }

@@ -132,7 +132,7 @@ class HttpApi implements Api {
           "id": topicID,
           "endDateTime": 0,
           "startDateTime": 0,
-          "idleTimeInHours": 0,
+          "idleTimeInMinutes": 0,
           "preTestScore": 0,
           "state": "notStarted",
           "preTestAttempts": 0,
@@ -172,7 +172,7 @@ class HttpApi implements Api {
                   "id": 1,
                   "endDateTime": DateTime.now(),
                   "startDateTime": DateTime.now(),
-                  "idleTimeInHours": 1,
+                  "idleTimeInMinutes": 1,
                   "preTestScore": 30,
                   "state": "done",
                   "preTestAttempts": 2,
@@ -442,6 +442,51 @@ class HttpApi implements Api {
         if (element["finalTestScore"] < testScore)
           element["finalTestScore"] = testScore;
       }
+    });
+
+    print(concepts);
+    store.collection("users").doc(user.email).update({"concepts": concepts});
+    doc = await store.collection("users").doc(user.email).get();
+    return User.fromJson(doc.data());
+  }
+
+  startTopicTime({int topicID, User user}) async {
+    var doc = await store.collection("users").doc(user.email).get();
+    print(doc.get("concepts"));
+    List<dynamic> concepts = doc.get("concepts");
+    print(concepts[0]["id"]);
+    concepts.forEach((element) {
+      if (element["id"] == 1)
+        element["topics"].forEach((topic) {
+          if (topic["id"] == topicID) {
+            if (topic["startDateTime"] != 0) return user;
+            topic["startDateTime"] = DateTime.now().millisecondsSinceEpoch;
+          }
+        });
+    });
+
+    print(concepts);
+    store.collection("users").doc(user.email).update({"concepts": concepts});
+    doc = await store.collection("users").doc(user.email).get();
+    return User.fromJson(doc.data());
+  }
+
+  endTopicTime({int topicID, User user}) async {
+    var doc = await store.collection("users").doc(user.email).get();
+    print(doc.get("concepts"));
+    List<dynamic> concepts = doc.get("concepts");
+    print(concepts[0]["id"]);
+    concepts.forEach((element) {
+      if (element["id"] == 1)
+        element["topics"].forEach((topic) {
+          if (topic["id"] == topicID) {
+            if (topic["endDateTime"] != 0) return user;
+            topic["endDateTime"] = DateTime.now().millisecondsSinceEpoch;
+            topic["idleTimeInMinutes"] =
+                ((topic["endDateTime"] - topic["startDateTime"]) / 60000)
+                    .ceil();
+          }
+        });
     });
 
     print(concepts);
