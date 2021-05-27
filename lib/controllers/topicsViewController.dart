@@ -1,0 +1,98 @@
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+import 'package:base_notifier/base_notifier.dart';
+import 'package:graduation_project/models/concept.dart';
+import 'package:graduation_project/models/quiz.dart';
+import 'package:graduation_project/models/topic.dart';
+
+import 'package:graduation_project/services/api/http_api.dart';
+import 'package:graduation_project/services/auth/authentication_service.dart';
+
+class TopicsViewController extends BaseNotifier {
+  final AuthenticationService auth;
+  final HttpApi api;
+  TopicsViewController({NotifierState state, this.api, this.auth})
+      : super(state: state);
+
+  static List<Topic> topics = [];
+  Quiz preTest, postTest;
+  static int topicIndex = 0;
+  static Concept con;
+  int preTestScore = 0, postTestScore = 0;
+  List<bool> preTestAnswers = [], postTestAnswers = [];
+  PDFDocument pdf;
+  static List<dynamic> ids = [];
+
+  getTopics({List<dynamic> topicIDs, Concept conc}) async {
+    setBusy();
+    con = conc;
+    if (ids.isEmpty) ids = topicIDs;
+    topics = await api.getTopics(topicsIDs: ids);
+    print(topics.length);
+    setIdle();
+  }
+
+  getPreTest(int testID) async {
+    setBusy();
+    preTest = await api.getPreTest(testID: testID);
+    print(preTest.questions.length);
+    setIdle();
+  }
+
+  getPostTest(int testID) async {
+    setBusy();
+    postTest = await api.getPostTest(testID: testID);
+    print(postTest.questions.length);
+    setIdle();
+  }
+
+  selectPreTestAnswer(bool answer, int index) {
+    print(index);
+    if (preTestAnswers.isNotEmpty && index <= preTestAnswers.length - 1)
+      preTestAnswers.removeAt(index);
+    preTestAnswers.insert(index, answer);
+    print(preTestAnswers);
+  }
+
+  selectPostTestAnswer(bool answer, int index) {
+    print(index);
+    if (postTestAnswers.isNotEmpty && index <= postTestAnswers.length - 1)
+      postTestAnswers.removeAt(index);
+    postTestAnswers.insert(index, answer);
+    print(postTestAnswers);
+  }
+
+  calculatePreTestScore() async {
+    preTestScore = 0;
+    preTestAnswers.forEach((element) {
+      if (element) preTestScore++;
+    });
+    auth.setUser(
+      user: await api.setPreTestScore(
+        topicID: topics[topicIndex].id,
+        testScore: preTestScore,
+        user: auth.user,
+      ),
+    );
+  }
+
+  calculatePostTestScore() async {
+    postTestScore = 0;
+    postTestAnswers.forEach((element) {
+      if (element) postTestScore++;
+    });
+    auth.setUser(
+      user: await api.setPostTestScore(
+        topicID: topics[topicIndex].id,
+        testScore: preTestScore,
+        user: auth.user,
+      ),
+    );
+  }
+
+  loadPdfFile(String url) async {
+    setBusy();
+    pdf = await PDFDocument.fromURL(url);
+
+    setIdle();
+  }
+}
