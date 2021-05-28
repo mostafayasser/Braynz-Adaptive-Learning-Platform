@@ -2,6 +2,8 @@ import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/topicsViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
+import 'package:graduation_project/ui/widgets/failedDialog.dart';
+import 'package:graduation_project/ui/widgets/passedDialog.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
 import 'package:graduation_project/views/topicMaterialView.dart';
 import 'package:provider/provider.dart';
@@ -41,13 +43,52 @@ class PreTestView extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {
-                              model.calculatePreTestScore();
-                              Navigator.of(context).push(
+                            onPressed: () async {
+                              bool passed = await model.calculatePreTestScore();
+                              if (passed) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: PassedDialog(
+                                      buttonText: "Proceed to material",
+                                      proceedOnPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TopicMaterialView(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                List<int> numbers = model.wrongPreTestAnswers();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: FailedDialog(
+                                      buttonText: "Proceed to material",
+                                      wrongQuestionsNumbers: numbers,
+                                      proceedOnPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TopicMaterialView(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                              /* Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => TopicMaterialView(),
                                 ),
-                              );
+                              ); */
                             },
                             child: Text("Submit"),
                           )

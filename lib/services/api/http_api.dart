@@ -495,6 +495,26 @@ class HttpApi implements Api {
     return User.fromJson(doc.data());
   }
 
+  completeTopicState({int topicID, User user}) async {
+    var doc = await store.collection("users").doc(user.email).get();
+    print(doc.get("concepts"));
+    List<dynamic> concepts = doc.get("concepts");
+    print(concepts[0]["id"]);
+    concepts.forEach((element) {
+      if (element["id"] == 1)
+        element["topics"].forEach((topic) {
+          if (topic["id"] == topicID) {
+            topic["state"] = "completed";
+          }
+        });
+    });
+
+    print(concepts);
+    store.collection("users").doc(user.email).update({"concepts": concepts});
+    doc = await store.collection("users").doc(user.email).get();
+    return User.fromJson(doc.data());
+  }
+
   rateMaterial({int topicID, String type, int index, double rate}) async {
     var doc = await store.collection("topics").doc(topicID.toString()).get();
 

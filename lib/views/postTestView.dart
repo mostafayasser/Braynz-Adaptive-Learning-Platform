@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/topicsViewController.dart';
 import 'package:graduation_project/models/user.dart';
 import 'package:graduation_project/services/api/api.dart';
+import 'package:graduation_project/ui/widgets/failedDialog.dart';
+import 'package:graduation_project/ui/widgets/passedDialog.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
 import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
@@ -42,22 +44,79 @@ class PostTestView extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               model.calculatePostTestScore();
-                              User user = model.api.startTopicTime(
+                              User user = await model.api.startTopicTime(
                                 topicID: TopicsViewController
                                     .topics[TopicsViewController.topicIndex].id,
                                 user: model.auth.user,
                               );
                               model.auth.setUser(user: user);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => TopicsView(
-                                    topicsIDs: TopicsViewController.con.topics,
-                                    concept: TopicsViewController.con,
+                              bool passed =
+                                  await model.calculatePostTestScore();
+                              if (passed) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: PassedDialog(
+                                      buttonText: "Go to topics page",
+                                      proceedOnPressed: () async {
+                                        user =
+                                            await model.api.completeTopicState(
+                                          topicID: TopicsViewController
+                                              .topics[TopicsViewController
+                                                  .topicIndex]
+                                              .id,
+                                          user: model.auth.user,
+                                        );
+                                        model.auth.setUser(user: user);
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => TopicsView(
+                                              topicsIDs: TopicsViewController
+                                                  .con.topics,
+                                              concept: TopicsViewController.con,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: FailedDialog(
+                                      buttonText: "Go to topics page",
+                                      wrongQuestionsNumbers:
+                                          model.wrongPostTestAnswers(),
+                                      proceedOnPressed: () async {
+                                        user =
+                                            await model.api.completeTopicState(
+                                          topicID: TopicsViewController
+                                              .topics[TopicsViewController
+                                                  .topicIndex]
+                                              .id,
+                                          user: model.auth.user,
+                                        );
+                                        model.auth.setUser(user: user);
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => TopicsView(
+                                              topicsIDs: TopicsViewController
+                                                  .con.topics,
+                                              concept: TopicsViewController.con,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
                             },
                             child: Text("Submit"),
                           )

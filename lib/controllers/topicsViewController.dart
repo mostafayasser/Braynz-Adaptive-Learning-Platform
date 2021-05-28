@@ -61,7 +61,7 @@ class TopicsViewController extends BaseNotifier {
     print(postTestAnswers);
   }
 
-  calculatePreTestScore() async {
+  Future<bool> calculatePreTestScore() async {
     preTestScore = 0;
     preTestAnswers.forEach((element) {
       if (element) preTestScore++;
@@ -73,9 +73,11 @@ class TopicsViewController extends BaseNotifier {
         user: auth.user,
       ),
     );
+    if (preTestScore >= (preTest.numOfQuestions * .7)) return true;
+    return false;
   }
 
-  calculatePostTestScore() async {
+  Future<bool> calculatePostTestScore() async {
     postTestScore = 0;
     postTestAnswers.forEach((element) {
       if (element) postTestScore++;
@@ -87,6 +89,24 @@ class TopicsViewController extends BaseNotifier {
         user: auth.user,
       ),
     );
+    if (postTestScore >= (postTest.numOfQuestions * .7)) return true;
+    return false;
+  }
+
+  List<int> wrongPreTestAnswers() {
+    List<int> numbers = [];
+    for (int i = 0; i < preTest.numOfQuestions; i++) {
+      if (!preTestAnswers[i]) numbers.add(i + 1);
+    }
+    return numbers;
+  }
+
+  List<int> wrongPostTestAnswers() {
+    List<int> numbers = [];
+    for (int i = 0; i < postTest.numOfQuestions; i++) {
+      if (!postTestAnswers[i]) numbers.add(i + 1);
+    }
+    return numbers;
   }
 
   loadPdfFile(String url) async {

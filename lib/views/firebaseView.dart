@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:graduation_project/ui/widgets/failedDialog.dart';
+import 'package:graduation_project/views/topicMaterialView.dart';
 
 class FirebaseView extends StatelessWidget {
   @override
@@ -9,7 +11,22 @@ class FirebaseView extends StatelessWidget {
       body: Center(
         child: FlatButton(
             onPressed: () {
-              final FirebaseFirestore store = FirebaseFirestore.instance;
+              List<int> numbers = [1, 2, 3];
+              showDialog(
+                useSafeArea: false,
+                context: context,
+                builder: (context) => Dialog(
+                  backgroundColor: Colors.transparent,
+                  child: FailedDialog(
+                    buttonText: "Proceed to material",
+                    wrongQuestionsNumbers: numbers,
+                    proceedOnPressed: () {
+                      print("object");
+                    },
+                  ),
+                ),
+              );
+              /* final FirebaseFirestore store = FirebaseFirestore.instance;
               store
                   .collection("tests")
                   .doc("2")
@@ -26,7 +43,7 @@ class FirebaseView extends StatelessWidget {
                 "question": "question",
                 "topicName": "while loops",
                 "topicID": 2
-              });
+              }); */
             },
             child: Text("submit")),
       ),

@@ -49,6 +49,13 @@ class SkipPostTestView extends StatelessWidget {
                               .topics[TopicsViewController.topicIndex].id,
                           user: model.auth.user,
                         );
+
+                        model.auth.setUser(user: user);
+                        user = await model.api.completeTopicState(
+                          topicID: TopicsViewController
+                              .topics[TopicsViewController.topicIndex].id,
+                          user: model.auth.user,
+                        );
                         model.auth.setUser(user: user);
                         Navigator.of(context).push(
                           MaterialPageRoute(

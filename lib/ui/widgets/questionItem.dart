@@ -30,6 +30,19 @@ class _QuestionItemState extends State<QuestionItem> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(widget.question.question),
+              GestureDetector(
+                  child: Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.grey,
+                  ),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: Text(widget.question.hint),
+                      ),
+                    );
+                  })
             ],
           ),
           ...List.generate(
