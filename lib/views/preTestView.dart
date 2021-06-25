@@ -45,6 +45,7 @@ class PreTestView extends StatelessWidget {
                           RaisedButton(
                             onPressed: () async {
                               bool passed = await model.calculatePreTestScore();
+                              List<int> numbers = model.wrongPreTestAnswers();
                               if (passed) {
                                 showDialog(
                                   context: context,
@@ -52,6 +53,10 @@ class PreTestView extends StatelessWidget {
                                     backgroundColor: Colors.transparent,
                                     child: PassedDialog(
                                       buttonText: "Proceed to material",
+                                      backButtonText: "topics view",
+                                      wrongAnswersNums: numbers,
+                                      score: model.preTestScore /
+                                          model.preTest.numOfQuestions,
                                       proceedOnPressed: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
@@ -64,7 +69,6 @@ class PreTestView extends StatelessWidget {
                                   ),
                                 );
                               } else {
-                                List<int> numbers = model.wrongPreTestAnswers();
                                 showDialog(
                                   context: context,
                                   builder: (context) => Dialog(
@@ -72,6 +76,8 @@ class PreTestView extends StatelessWidget {
                                     child: FailedDialog(
                                       buttonText: "Proceed to material",
                                       wrongQuestionsNumbers: numbers,
+                                      score: model.preTestScore /
+                                          model.preTest.numOfQuestions,
                                       proceedOnPressed: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(

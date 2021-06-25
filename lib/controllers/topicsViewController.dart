@@ -70,6 +70,7 @@ class TopicsViewController extends BaseNotifier {
       user: await api.setPreTestScore(
         topicID: topics[topicIndex].id,
         testScore: preTestScore,
+        conceptID: con.id,
         user: auth.user,
       ),
     );
@@ -86,6 +87,7 @@ class TopicsViewController extends BaseNotifier {
       user: await api.setPostTestScore(
         topicID: topics[topicIndex].id,
         testScore: preTestScore,
+        conceptID: con.id,
         user: auth.user,
       ),
     );

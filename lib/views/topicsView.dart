@@ -23,6 +23,10 @@ class TopicsView extends StatelessWidget {
     return FocusWidget(
       child: Scaffold(
         appBar: AppBar(
+          title: Text(
+            "Topics View",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
           leading: IconButton(
               icon: Platform.isIOS
                   ? Icon(
@@ -75,6 +79,7 @@ class TopicsView extends StatelessWidget {
                                   User user = await model.api.startTopicTime(
                                     topicID:
                                         TopicsViewController.topics[index].id,
+                                    conceptID: TopicsViewController.con.id,
                                     user: model.auth.user,
                                   );
                                   model.auth.setUser(user: user);
@@ -86,13 +91,21 @@ class TopicsView extends StatelessWidget {
                                   ));
                                 },
                                 child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.1,
                                   margin: EdgeInsets.only(bottom: 10),
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(20),
-                                  width: MediaQuery.of(context).size.width * .4,
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(20),
+                                      image: DecorationImage(
+                                          image: AssetImage(index == 0
+                                              ? "assets/Joomla.jpg"
+                                              : "assets/Forest.jpg"),
+                                          fit: BoxFit.cover),
                                       boxShadow: [
                                         BoxShadow(
                                             color: Colors.black26,
@@ -101,22 +114,33 @@ class TopicsView extends StatelessWidget {
                                       ]),
                                   child: Text(
                                     TopicsViewController.topics[index].name,
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
                             ),
-                            RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
-                              color: Colors.blue,
-                              child: Text(
-                                "Take final test",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => FinalTestView(),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                                color: Colors.blue,
+                                child: Text(
+                                  "Take final test",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => FinalTestView(),
+                                  ),
                                 ),
                               ),
                             ),

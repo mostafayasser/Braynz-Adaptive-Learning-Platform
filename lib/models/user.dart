@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:graduation_project/models/dashboard.dart';
+
 User userFromJson(String str) => User.fromJson(json.decode(str));
 
 String userToJson(User data) => json.encode(data.toJson());
@@ -19,6 +21,7 @@ class User {
     this.knowledgeLevel,
     this.learningStyle,
     this.concepts,
+    this.dashboard,
   });
 
   int id;
@@ -30,6 +33,7 @@ class User {
   String knowledgeLevel;
   List<String> learningStyle;
   List<UserConcept> concepts;
+  Dashboard dashboard;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],

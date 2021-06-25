@@ -36,6 +36,7 @@ class TopicMaterialView extends StatelessWidget {
             initState: (m) => m.api.increaseTimesOfStudy(
                 topicID: TopicsViewController
                     .topics[TopicsViewController.topicIndex].id,
+                conceptID: TopicsViewController.con.id,
                 user: m.auth.user),
             model: TopicsViewController(
               api: Provider.of<Api>(context),

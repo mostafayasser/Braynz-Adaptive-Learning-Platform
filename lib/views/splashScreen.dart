@@ -17,8 +17,15 @@ void _keepAlive(bool visible, LoginViewController model) async {
   if (visible) {
     _keepAliveTimer = null;
     bool inSession = await model.api.userInSession(model.auth.user);
+
     if (!inSession) {
       model.api.startSession(model.auth.user);
+    } else {
+      var time = await model.api.lastSessionStartTime(model.auth.user);
+      if (time != 0 && DateTime.now().millisecondsSinceEpoch - time > 7200000) {
+        await model.api.endSession(model.auth.user);
+        model.api.startSession(model.auth.user);
+      }
     }
     print("visible");
   } else {
@@ -61,7 +68,7 @@ class SplashView extends StatelessWidget {
   Widget build(BuildContext context) {
     return FocusWidget(
       child: Scaffold(
-        appBar: AppBar(),
+        //appBar: AppBar(),
         body: BaseWidget<LoginViewController>(
             initState: (m) =>
                 WidgetsBinding.instance.addPostFrameCallback((_) async {

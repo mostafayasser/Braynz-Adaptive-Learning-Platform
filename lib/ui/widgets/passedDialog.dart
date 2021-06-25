@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 
 class PassedDialog extends StatelessWidget {
-  final buttonText, proceedOnPressed;
+  final buttonText,
+      proceedOnPressed,
+      backButtonText,
+      wrongAnswersNums,
+      score,
+      conceptPreTest;
 
-  const PassedDialog({Key key, this.buttonText, this.proceedOnPressed})
-      : super(key: key);
+  const PassedDialog({
+    Key key,
+    this.buttonText,
+    this.proceedOnPressed,
+    this.backButtonText,
+    this.wrongAnswersNums,
+    this.score,
+    this.conceptPreTest = false,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.28,
+      height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -26,6 +38,26 @@ class PassedDialog extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
+          Text("Your score is $score"),
+          SizedBox(
+            height: 10,
+          ),
+          if (wrongAnswersNums != null) Text("Wrong questions numbers are "),
+          if (wrongAnswersNums != null)
+            Wrap(
+              children: List.generate(
+                wrongAnswersNums.length,
+                (index) => Text(
+                  index != wrongAnswersNums.length - 1
+                      ? "${wrongAnswersNums[index].toString()},"
+                      : "${wrongAnswersNums[index].toString()}",
+                ),
+              ),
+            ),
+          if (wrongAnswersNums != null)
+            SizedBox(
+              height: 10,
+            ),
           Image.asset(
             "assets/smileIcon.png",
             height: 50,
@@ -53,12 +85,13 @@ class PassedDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25)),
                 color: Colors.blue,
                 child: Text(
-                  "Go Back",
+                  "Back to $backButtonText",
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
+                  if (!conceptPreTest) Navigator.of(context).pop();
                 },
               ),
             ],

@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/ui/widgets/failedDialog.dart';
-import 'package:graduation_project/views/topicMaterialView.dart';
 
 class FirebaseView extends StatelessWidget {
   @override

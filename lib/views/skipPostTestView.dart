@@ -47,6 +47,7 @@ class SkipPostTestView extends StatelessWidget {
                         User user = await model.api.endTopicTime(
                           topicID: TopicsViewController
                               .topics[TopicsViewController.topicIndex].id,
+                          conceptID: TopicsViewController.con.id,
                           user: model.auth.user,
                         );
 
@@ -54,6 +55,7 @@ class SkipPostTestView extends StatelessWidget {
                         user = await model.api.completeTopicState(
                           topicID: TopicsViewController
                               .topics[TopicsViewController.topicIndex].id,
+                          conceptID: TopicsViewController.con.id,
                           user: model.auth.user,
                         );
                         model.auth.setUser(user: user);

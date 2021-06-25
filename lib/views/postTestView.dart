@@ -46,9 +46,10 @@ class PostTestView extends StatelessWidget {
                           RaisedButton(
                             onPressed: () async {
                               model.calculatePostTestScore();
-                              User user = await model.api.startTopicTime(
+                              User user = await model.api.endTopicTime(
                                 topicID: TopicsViewController
                                     .topics[TopicsViewController.topicIndex].id,
+                                conceptID: TopicsViewController.con.id,
                                 user: model.auth.user,
                               );
                               model.auth.setUser(user: user);
@@ -60,7 +61,12 @@ class PostTestView extends StatelessWidget {
                                   builder: (context) => Dialog(
                                     backgroundColor: Colors.transparent,
                                     child: PassedDialog(
-                                      buttonText: "Go to topics page",
+                                      buttonText: "Go to topics view",
+                                      backButtonText: "materials",
+                                      wrongAnswersNums:
+                                          model.wrongPostTestAnswers(),
+                                      score: model.postTestScore /
+                                          model.postTest.numOfQuestions,
                                       proceedOnPressed: () async {
                                         user =
                                             await model.api.completeTopicState(
@@ -68,6 +74,8 @@ class PostTestView extends StatelessWidget {
                                               .topics[TopicsViewController
                                                   .topicIndex]
                                               .id,
+                                          conceptID:
+                                              TopicsViewController.con.id,
                                           user: model.auth.user,
                                         );
                                         model.auth.setUser(user: user);
@@ -93,16 +101,20 @@ class PostTestView extends StatelessWidget {
                                       buttonText: "Go to topics page",
                                       wrongQuestionsNumbers:
                                           model.wrongPostTestAnswers(),
+                                      score: model.preTestScore /
+                                          model.preTest.numOfQuestions,
                                       proceedOnPressed: () async {
-                                        user =
+                                        /* user =
                                             await model.api.completeTopicState(
                                           topicID: TopicsViewController
                                               .topics[TopicsViewController
                                                   .topicIndex]
                                               .id,
+                                          conceptID:
+                                              TopicsViewController.con.id,
                                           user: model.auth.user,
                                         );
-                                        model.auth.setUser(user: user);
+                                        model.auth.setUser(user: user); */
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) => TopicsView(
