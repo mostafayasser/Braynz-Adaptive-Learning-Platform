@@ -2,9 +2,9 @@ import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/registerationViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
-import 'package:graduation_project/ui/widgets/dropDownList.dart';
 
 import 'package:graduation_project/ui/widgets/txtFieldCustom.dart';
+import 'package:graduation_project/views/learningStyleTestView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
@@ -36,6 +36,21 @@ class RegisterationView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     CustomTextField(
+                      controller: model.nameController,
+                      hintText: "Enter Your First name",
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CustomTextField(
+                      controller: model.ageController,
+                      hintText: "Enter your age",
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CustomTextField(
                       controller: model.emailController,
                       hintText: "Enter Email",
                     ),
@@ -49,22 +64,19 @@ class RegisterationView extends StatelessWidget {
                     SizedBox(
                       height: 20,
                     ),
-                    DropDownList(
-                      hint: "Study time",
-                      items: model.studyTimes,
-                      onChange: (value) {
-                        model.studyTime = value;
-                        model.setState();
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
                     model.busy
                         ? CircularProgressIndicator()
                         : RaisedButton(
-                            onPressed: () {
-                              model.register();
+                            onPressed: () async {
+                              bool done = await model.register();
+                              if (done) {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        LearningStyleTestPage(),
+                                  ),
+                                );
+                              }
                             },
                             child: Text("Register"),
                           ),

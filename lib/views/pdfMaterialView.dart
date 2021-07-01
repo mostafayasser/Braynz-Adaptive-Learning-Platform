@@ -69,7 +69,7 @@ class _PDFMaterialViewState extends State<PDFMaterialView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             RatingBar.builder(
-                              initialRating: 5,
+                              initialRating: 0,
                               minRating: 1,
                               direction: Axis.horizontal,
                               allowHalfRating: true,

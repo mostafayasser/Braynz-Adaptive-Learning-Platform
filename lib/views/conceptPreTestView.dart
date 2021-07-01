@@ -75,10 +75,12 @@ class ConceptPreTestView extends StatelessWidget {
                                                         "concepts view",
                                                     wrongAnswersNums: model
                                                         .wrongTestAnswers(),
-                                                    score: model.testScore /
-                                                        model.test
-                                                            .numOfQuestions,
-                                                    conceptPreTest: true,
+                                                    score: double.parse(((model
+                                                                    .testScore /
+                                                                model.test
+                                                                    .numOfQuestions) *
+                                                            100)
+                                                        .toStringAsFixed(1)),
                                                     proceedOnPressed: () {
                                                       Navigator.of(context)
                                                           .pushReplacement(
@@ -116,9 +118,11 @@ class ConceptPreTestView extends StatelessWidget {
                                                         .wrongTestAnswers(),
                                                     failureMessage:
                                                         "You need to study following topic(s)",
-                                                    score: model.testScore /
-                                                        model.test
-                                                            .numOfQuestions,
+                                                    score: double.parse(((model
+                                                                .testScore /
+                                                            model.test
+                                                                .numOfQuestions))
+                                                        .toStringAsFixed(1)),
                                                     reviseTopics: reviseTopics,
                                                     proceedOnPressed: () {
                                                       Navigator.of(context)

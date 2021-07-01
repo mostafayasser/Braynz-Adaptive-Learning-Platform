@@ -13,19 +13,22 @@ class RegisterationViewController extends BaseNotifier {
   }) : super(state: state);
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  var studyTime;
-  List<String> studyTimes = ["Morning", "Evening"];
-  register() async {
+  final nameController = TextEditingController();
+  final ageController = TextEditingController();
+  Future<bool> register() async {
     setBusy();
     await auth.signUp({
       "email": emailController.text,
-      "studyTime": studyTime,
-      "password": passwordController.text
+      "password": passwordController.text,
+      "name": nameController.text,
+      "age": int.parse(ageController.text),
     });
     if (auth.userLoged) {
       setIdle();
+      return true;
     } else {
       setError();
+      return false;
     }
   }
 }

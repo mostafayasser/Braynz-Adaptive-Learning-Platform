@@ -105,9 +105,9 @@ class UserTopic {
   DateTime endDateTime;
   DateTime startDateTime;
   int idleTimeInMinutes;
-  int preTestScore;
+  double preTestScore;
   int preTestAttempts;
-  int postTestScore;
+  double postTestScore;
   int postTestAttempts;
   int timesOfStudy;
 
@@ -118,9 +118,9 @@ class UserTopic {
         startDateTime:
             new DateTime.fromMicrosecondsSinceEpoch(json["startDateTime"]),
         idleTimeInMinutes: json["idleTimeInMinutes"].toInt(),
-        preTestScore: json["preTestScore"],
+        preTestScore: json["preTestScore"].toDouble(),
         preTestAttempts: json["preTestAttempts"],
-        postTestScore: json["postTestScore"],
+        postTestScore: json["postTestScore"].toDouble(),
         postTestAttempts: json["postTestAttempts"],
         timesOfStudy: json["timesOfStudy"],
       );

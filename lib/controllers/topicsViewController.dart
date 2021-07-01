@@ -25,7 +25,7 @@ class TopicsViewController extends BaseNotifier {
   getTopics({List<dynamic> topicIDs, Concept conc}) async {
     setBusy();
     con = conc;
-    if (ids.isEmpty) ids = topicIDs;
+    ids = topicIDs;
     topics = await api.getTopics(topicsIDs: ids);
     print(topics.length);
     setIdle();
@@ -69,12 +69,13 @@ class TopicsViewController extends BaseNotifier {
     auth.setUser(
       user: await api.setPreTestScore(
         topicID: topics[topicIndex].id,
-        testScore: preTestScore,
+        testScore: double.parse(
+            ((preTestScore / preTest.numOfQuestions) * 100).toStringAsFixed(1)),
         conceptID: con.id,
         user: auth.user,
       ),
     );
-    if (preTestScore >= (preTest.numOfQuestions * .7)) return true;
+    if (preTestScore >= (preTest.numOfQuestions * .6)) return true;
     return false;
   }
 
@@ -86,12 +87,14 @@ class TopicsViewController extends BaseNotifier {
     auth.setUser(
       user: await api.setPostTestScore(
         topicID: topics[topicIndex].id,
-        testScore: preTestScore,
+        testScore: double.parse(
+            ((postTestScore / postTest.numOfQuestions) * 100)
+                .toStringAsFixed(1)),
         conceptID: con.id,
         user: auth.user,
       ),
     );
-    if (postTestScore >= (postTest.numOfQuestions * .7)) return true;
+    if (postTestScore >= (postTest.numOfQuestions * .6)) return true;
     return false;
   }
 

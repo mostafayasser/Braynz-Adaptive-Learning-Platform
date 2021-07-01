@@ -65,8 +65,12 @@ class PostTestView extends StatelessWidget {
                                       backButtonText: "materials",
                                       wrongAnswersNums:
                                           model.wrongPostTestAnswers(),
-                                      score: model.postTestScore /
-                                          model.postTest.numOfQuestions,
+                                      score: double.parse(
+                                          ((model.postTestScore /
+                                                      model.postTest
+                                                          .numOfQuestions) *
+                                                  100)
+                                              .toStringAsFixed(1)),
                                       proceedOnPressed: () async {
                                         user =
                                             await model.api.completeTopicState(
@@ -101,8 +105,12 @@ class PostTestView extends StatelessWidget {
                                       buttonText: "Go to topics page",
                                       wrongQuestionsNumbers:
                                           model.wrongPostTestAnswers(),
-                                      score: model.preTestScore /
-                                          model.preTest.numOfQuestions,
+                                      score: double.parse(
+                                          ((model.postTestScore /
+                                                      model.postTest
+                                                          .numOfQuestions) *
+                                                  100)
+                                              .toStringAsFixed(1)),
                                       proceedOnPressed: () async {
                                         /* user =
                                             await model.api.completeTopicState(

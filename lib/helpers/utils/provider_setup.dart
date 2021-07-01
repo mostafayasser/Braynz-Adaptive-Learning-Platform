@@ -2,7 +2,6 @@
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/services/api/http_api.dart';
 import 'package:graduation_project/services/auth/authentication_service.dart';
-import 'package:graduation_project/services/connectivity/connectivity_service.dart';
 import 'package:graduation_project/services/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -17,8 +16,6 @@ List<SingleChildWidget> providers = [
 
 List<SingleChildWidget> independentServices = [
   Provider<Api>(create: (c) => HttpApi()),
-  ChangeNotifierProvider<ConnectivityService>(
-      create: (context) => ConnectivityService()),
 ];
 
 List<SingleChildWidget> dependentServices = [

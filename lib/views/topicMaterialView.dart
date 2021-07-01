@@ -28,7 +28,10 @@ class TopicMaterialView extends StatelessWidget {
                     ),
               onPressed: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => TopicsView(),
+                      builder: (context) => TopicsView(
+                        topicsIDs: TopicsViewController.ids,
+                        concept: TopicsViewController.con,
+                      ),
                     ),
                   )),
         ),
@@ -61,6 +64,16 @@ visualMaterial(context) {
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "Videos",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          ),
+        ),
+      ),
       ...List.generate(
         TopicsViewController.topics[TopicsViewController.topicIndex].material
             .videoMaterial.length,
@@ -116,6 +129,16 @@ visualMaterial(context) {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "PDFs",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
           ),
         ),
       ),
@@ -186,6 +209,16 @@ verbalMaterial(context) {
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "PDFs",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          ),
+        ),
+      ),
       ...List.generate(
         TopicsViewController.topics[TopicsViewController.topicIndex].material
             .pdfMaterial.length,
@@ -241,6 +274,16 @@ verbalMaterial(context) {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "Videos",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
           ),
         ),
       ),

@@ -20,6 +20,7 @@ class LearningStyleTestPage extends StatelessWidget {
             builder: (context, model, child) {
               return Scaffold(
                 appBar: AppBar(
+                  leading: Container(),
                   centerTitle: true,
                   title: Text(
                     "Learning Style Quiz",

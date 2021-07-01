@@ -40,7 +40,7 @@ class FailedDialog extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Text("Your score is $score"),
+          Text("Your score is $score%"),
           SizedBox(
             height: 10,
           ),

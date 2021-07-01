@@ -63,8 +63,13 @@ class FinalTestView extends StatelessWidget {
                                               backButtonText: "topics view",
                                               wrongAnswersNums:
                                                   model.wrongTestAnswers(),
-                                              score: model.testScore /
-                                                  model.test.numOfQuestions,
+                                              score: double.parse(((model
+                                                              .testScore /
+                                                          model.test
+                                                              .numOfQuestions) *
+                                                      100)
+                                                  .toStringAsFixed(1)),
+                                              conceptFinalTest: true,
                                               proceedOnPressed: () {
                                                 Navigator.of(context)
                                                     .pushReplacement(
@@ -88,8 +93,12 @@ class FinalTestView extends StatelessWidget {
                                                   model.wrongTestAnswers(),
                                               failureMessage:
                                                   "You need to revise following topic(s)",
-                                              score: model.testScore /
-                                                  model.test.numOfQuestions,
+                                              score: double.parse(((model
+                                                              .testScore /
+                                                          model.test
+                                                              .numOfQuestions) *
+                                                      100)
+                                                  .toStringAsFixed(1)),
                                               reviseTopics: reviseTopics,
                                               proceedOnPressed: () {
                                                 Navigator.of(context)

@@ -55,8 +55,11 @@ class PreTestView extends StatelessWidget {
                                       buttonText: "Proceed to material",
                                       backButtonText: "topics view",
                                       wrongAnswersNums: numbers,
-                                      score: model.preTestScore /
-                                          model.preTest.numOfQuestions,
+                                      score: double.parse(((model.preTestScore /
+                                                  model
+                                                      .preTest.numOfQuestions) *
+                                              100)
+                                          .toStringAsFixed(1)),
                                       proceedOnPressed: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
@@ -76,8 +79,11 @@ class PreTestView extends StatelessWidget {
                                     child: FailedDialog(
                                       buttonText: "Proceed to material",
                                       wrongQuestionsNumbers: numbers,
-                                      score: model.preTestScore /
-                                          model.preTest.numOfQuestions,
+                                      score: double.parse(((model.preTestScore /
+                                                  model
+                                                      .preTest.numOfQuestions) *
+                                              100)
+                                          .toStringAsFixed(1)),
                                       proceedOnPressed: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(

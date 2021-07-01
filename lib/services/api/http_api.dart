@@ -58,15 +58,18 @@ class HttpApi implements Api {
           await firebaseAuth.createUserWithEmailAndPassword(
               email: param['email'], password: param['password']);
       if (credential.user != null) {
-        store.collection("users").doc(param['email']).set(param);
-        store.collection("users").doc(param['email']).update({
+        store.collection("users").doc(param['email']).set({
+          "email": param['email'],
           "currentConcept": 0,
           "currentTopic": 0,
           "knowledgeLevel": "beginner",
           "learningStyle": [],
-          "concepts": [{}]
+          "concepts": [],
+          "sessions": [],
+          "numOfSessions": 0,
         });
-        return User.fromJson(param);
+        var doc = await store.collection("users").doc(param['email']).get();
+        return User.fromJson(doc.data());
       }
     } catch (e) {
       print(e);
@@ -81,34 +84,31 @@ class HttpApi implements Api {
       user.concepts.forEach((element) {
         if (element.id == conceptID) found = true;
       });
+      var doc = await store.collection("users").doc(user.email).get();
       if (!found) {
-        var doc = await store.collection("users").doc(user.email).get();
         print(doc.get("concepts"));
         List<dynamic> concepts = doc.get("concepts");
 
         concepts.add({
           "id": conceptID,
           "muddiestPoint": 0,
-          "numOfSessions": 0,
           "finalTestScore": 0,
           "finalTestAttempts": 0,
           "preTestScore": 0,
           "preTestAttempts": 0,
-          "sessions": [],
           "topics": [],
         });
         store
             .collection("users")
             .doc(user.email)
             .update({"concepts": concepts});
-        store
-            .collection("users")
-            .doc(user.email)
-            .update({"currentConcept": conceptID});
-        doc = await store.collection("users").doc(user.email).get();
-        return User.fromJson(doc.data());
       }
-      return user;
+      store
+          .collection("users")
+          .doc(user.email)
+          .update({"currentConcept": conceptID});
+      doc = await store.collection("users").doc(user.email).get();
+      return User.fromJson(doc.data());
     } catch (e) {
       print(e);
       return null;
@@ -202,16 +202,14 @@ class HttpApi implements Api {
   startSession(User user) async {
     try {
       var doc = await store.collection("users").doc(user.email).get();
-      int currentConcept = doc.get("currentConcept");
-      List<dynamic> concepts = doc.get("concepts");
 
-      List<dynamic> sessions = concepts[currentConcept - 1]["sessions"];
+      List<dynamic> sessions = doc.get("sessions");
       sessions.add(
           {"startTime": DateTime.now().millisecondsSinceEpoch, "endTime": 0});
-      concepts[currentConcept - 1]["sessions"] = sessions;
-      concepts[currentConcept - 1]["numOfSessions"] = sessions.length - 1;
+
       store.collection("users").doc(user.email).update({
-        "concepts": concepts,
+        "sessions": sessions,
+        "numOfSessions": sessions.length,
       });
       return true;
     } catch (e) {
@@ -223,13 +221,11 @@ class HttpApi implements Api {
   endSession(User user) async {
     try {
       var doc = await store.collection("users").doc(user.email).get();
-      int currentConcept = doc.get("currentConcept");
-      List<dynamic> concepts = doc.get("concepts");
 
-      List<dynamic> sessions = concepts[currentConcept - 1]["sessions"];
+      List<dynamic> sessions = doc.get("sessions");
       sessions.last["endTime"] = DateTime.now().millisecondsSinceEpoch;
-      concepts[currentConcept - 1]["sessions"] = sessions;
-      store.collection("users").doc(user.email).update({"concepts": concepts});
+
+      store.collection("users").doc(user.email).update({"sessions": sessions});
       return true;
     } catch (e) {
       print(e);
@@ -240,10 +236,8 @@ class HttpApi implements Api {
   Future<bool> userInSession(User user) async {
     try {
       var doc = await store.collection("users").doc(user.email).get();
-      int currentConcept = doc.get("currentConcept");
-      List<dynamic> concepts = doc.get("concepts");
 
-      List<dynamic> sessions = concepts[currentConcept - 1]["sessions"];
+      List<dynamic> sessions = doc.get("sessions");
       if (sessions.isEmpty) return false;
       if (sessions.last["endTime"] == 0)
         return true;
@@ -256,50 +250,53 @@ class HttpApi implements Api {
   }
 
   Future<Dashboard> getUserDashboard(User user) async {
+    Dashboard dashboard = Dashboard();
     try {
-      Dashboard dashboard = Dashboard();
       var doc = await store.collection("users").doc(user.email).get();
 
-      int currentConcept = doc.get("currentConcept");
       List<dynamic> concepts = doc.get("concepts");
+      if (concepts.isEmpty) return dashboard;
       concepts.forEach((element) {
         dashboard.finalTestsAvg += element["finalTestScore"];
-        dashboard.studySessionsNum += element["numOfSessions"];
+
         element["topics"].forEach((topic) {
           if (topic["state"] == "completed") dashboard.finishedTopicsNum++;
         });
       });
-      List<dynamic> sessions = concepts[currentConcept - 1]["sessions"];
+      if (dashboard.finishedTopicsNum <= 3)
+        dashboard.knowledgeLevel = "Beginner";
+      else if (dashboard.finishedTopicsNum <= 6)
+        dashboard.knowledgeLevel = "Intermediate";
+      else
+        dashboard.knowledgeLevel = "Advanced";
+      List<dynamic> sessions = doc.get("sessions");
+      dashboard.studySessionsNum += sessions.length;
       sessions.forEach((element) {
         if (element["endTime"] != 0)
           dashboard.hoursOfStudy += element["endTime"] - element["startTime"];
       });
+
       dashboard.finalTestsAvg = dashboard.finalTestsAvg / concepts.length;
       dashboard.hoursOfStudy = dashboard.hoursOfStudy ~/ 3600000;
-      print(dashboard.finalTestsAvg);
-      print(dashboard.hoursOfStudy);
-      print(dashboard.finishedTopicsNum);
-      print(dashboard.studySessionsNum);
+      print(dashboard.knowledgeLevel);
       return dashboard;
     } catch (e) {
       print(e);
-      return null;
+      return dashboard;
     }
   }
 
   lastSessionStartTime(User user) async {
     try {
       var doc = await store.collection("users").doc(user.email).get();
-      int currentConcept = doc.get("currentConcept");
-      List<dynamic> concepts = doc.get("concepts");
 
-      List<dynamic> sessions = concepts[currentConcept - 1]["sessions"];
+      List<dynamic> sessions = doc.get("sessions");
       if (sessions.isEmpty) return 0;
 
       return sessions.last["startTime"];
     } catch (e) {
       print(e);
-      return true;
+      return 0;
     }
   }
 
@@ -390,7 +387,7 @@ class HttpApi implements Api {
   }
 
   setPreTestScore(
-      {int topicID, int conceptID, int testScore, User user}) async {
+      {int topicID, int conceptID, double testScore, User user}) async {
     var doc = await store.collection("users").doc(user.email).get();
     print(doc.get("concepts"));
     List<dynamic> concepts = doc.get("concepts");
@@ -440,7 +437,7 @@ class HttpApi implements Api {
   }
 
   setPostTestScore(
-      {int topicID, int conceptID, int testScore, User user}) async {
+      {int topicID, int conceptID, double testScore, User user}) async {
     var doc = await store.collection("users").doc(user.email).get();
     print(doc.get("concepts"));
     List<dynamic> concepts = doc.get("concepts");
@@ -599,19 +596,22 @@ class HttpApi implements Api {
     return User.fromJson(doc.data());
   }
 
-  completeTopicState({int topicID, int conceptID, User user}) async {
+  completeTopicState(
+      {int topicID, int conceptID, User user, bool add = false}) async {
+    if (add) {
+      await addTopic(topicID: topicID, conceptID: conceptID, user: user);
+    }
     var doc = await store.collection("users").doc(user.email).get();
-    print(doc.get("concepts"));
     List<dynamic> concepts = doc.get("concepts");
-    print(concepts[0]["id"]);
-    concepts.forEach((element) {
-      if (element["id"] == conceptID)
-        element["topics"].forEach((topic) {
+    for (int i = 0; i < concepts.length; i++) {
+      if (concepts[i]["id"] == conceptID) {
+        concepts[i]["topics"].forEach((topic) {
           if (topic["id"] == topicID) {
             topic["state"] = "completed";
           }
         });
-    });
+      }
+    }
 
     print(concepts);
     store.collection("users").doc(user.email).update({"concepts": concepts});
@@ -623,8 +623,12 @@ class HttpApi implements Api {
     var doc = await store.collection("topics").doc(topicID.toString()).get();
 
     var data = doc.data();
-    data["material"][type][index]["rate"] =
-        (data["material"][type][index]["rate"] + rate) / 2;
+    if (data["material"][type][index]["rate"] != 0 && rate != 0)
+      data["material"][type][index]["rate"] =
+          (data["material"][type][index]["rate"] + rate) / 2;
+    else if (data["material"][type][index]["rate"] == 0)
+      data["material"][type][index]["rate"] =
+          data["material"][type][index]["rate"] + rate;
     store.collection("topics").doc(topicID.toString()).update(data);
   }
 }

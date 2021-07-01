@@ -29,7 +29,9 @@ class _QuestionItemState extends State<QuestionItem> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.question.question),
+              Container(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Text(widget.question.question)),
               GestureDetector(
                   child: Icon(
                     Icons.info_outline_rounded,

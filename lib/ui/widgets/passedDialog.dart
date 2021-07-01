@@ -6,7 +6,7 @@ class PassedDialog extends StatelessWidget {
       backButtonText,
       wrongAnswersNums,
       score,
-      conceptPreTest;
+      conceptFinalTest;
 
   const PassedDialog({
     Key key,
@@ -15,12 +15,13 @@ class PassedDialog extends StatelessWidget {
     this.backButtonText,
     this.wrongAnswersNums,
     this.score,
-    this.conceptPreTest = false,
+    this.conceptFinalTest = false,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    print(wrongAnswersNums);
     return Container(
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.5,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -38,12 +39,13 @@ class PassedDialog extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Text("Your score is $score"),
+          Text("Your score is $score%"),
           SizedBox(
             height: 10,
           ),
-          if (wrongAnswersNums != null) Text("Wrong questions numbers are "),
-          if (wrongAnswersNums != null)
+          if (wrongAnswersNums != null && wrongAnswersNums.isNotEmpty)
+            Text("Wrong questions numbers are "),
+          if (wrongAnswersNums != null && wrongAnswersNums.isNotEmpty)
             Wrap(
               children: List.generate(
                 wrongAnswersNums.length,
@@ -54,7 +56,7 @@ class PassedDialog extends StatelessWidget {
                 ),
               ),
             ),
-          if (wrongAnswersNums != null)
+          if (wrongAnswersNums != null && wrongAnswersNums.isNotEmpty)
             SizedBox(
               height: 10,
             ),
@@ -67,8 +69,9 @@ class PassedDialog extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               RaisedButton(
                 shape: RoundedRectangleBorder(
@@ -90,8 +93,10 @@ class PassedDialog extends StatelessWidget {
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  if (!conceptPreTest) Navigator.of(context).pop();
+                  if (!conceptFinalTest) {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
             ],

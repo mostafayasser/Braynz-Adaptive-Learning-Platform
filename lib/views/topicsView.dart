@@ -20,6 +20,7 @@ class TopicsView extends StatelessWidget {
   const TopicsView({Key key, this.topicsIDs, this.concept}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    print(topicsIDs);
     return FocusWidget(
       child: Scaffold(
         appBar: AppBar(
@@ -70,7 +71,7 @@ class TopicsView extends StatelessWidget {
                                   if (concept != null) {
                                     TopicsViewController.con = concept;
                                     User user = await model.api.addTopic(
-                                        conceptID: concept.id,
+                                        conceptID: TopicsViewController.con.id,
                                         topicID: TopicsViewController
                                             .topics[index].id,
                                         user: model.auth.user);
@@ -94,7 +95,7 @@ class TopicsView extends StatelessWidget {
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.1,
+                                      MediaQuery.of(context).size.height * 0.13,
                                   margin: EdgeInsets.only(bottom: 10),
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(20),
@@ -112,12 +113,29 @@ class TopicsView extends StatelessWidget {
                                             blurRadius: 3,
                                             offset: Offset(0, 0))
                                       ]),
-                                  child: Text(
-                                    TopicsViewController.topics[index].name,
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        TopicsViewController.topics[index].name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      /* Text(
+                                        TopicsViewController
+                                            .topics[index].status,
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ), */
+                                    ],
                                   ),
                                 ),
                               ),

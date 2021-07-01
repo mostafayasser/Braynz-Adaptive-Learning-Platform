@@ -1,6 +1,7 @@
 import 'package:base_notifier/base_notifier.dart';
 import 'package:graduation_project/controllers/topicsViewController.dart';
 import 'package:graduation_project/models/concept.dart';
+import 'package:graduation_project/models/dashboard.dart';
 import 'package:graduation_project/models/quiz.dart';
 import 'package:graduation_project/models/user.dart';
 
@@ -18,10 +19,12 @@ class ConceptsViewController extends BaseNotifier {
   int testScore = 0;
   List<bool> testAnswers = [];
   static Concept currentConcept;
-  getConcepts() async {
+  Dashboard dashboard;
+
+  getIntialData(User user) async {
     setBusy();
     concepts = await api.getConcepts();
-    print(concepts[0].topics);
+    dashboard = await api.getUserDashboard(user);
     setIdle();
   }
 
@@ -53,7 +56,8 @@ class ConceptsViewController extends BaseNotifier {
       auth.setUser(
         user: await api.setFinalTestScore(
           conceptID: currentConcept.id,
-          testScore: (testScore / test.numOfQuestions) * 100,
+          testScore: double.parse(
+              ((testScore / test.numOfQuestions) * 100).toStringAsFixed(1)),
           user: auth.user,
         ),
       );
@@ -61,7 +65,8 @@ class ConceptsViewController extends BaseNotifier {
       auth.setUser(
         user: await api.setConceptPreTestScore(
           conceptID: currentConcept.id,
-          testScore: (testScore / test.numOfQuestions) * 100,
+          testScore: double.parse(
+              ((testScore / test.numOfQuestions) * 100).toStringAsFixed(1)),
           user: auth.user,
         ),
       );
@@ -82,6 +87,7 @@ class ConceptsViewController extends BaseNotifier {
           topicID: topics[i],
           conceptID: currentConcept.id,
           user: auth.user,
+          add: true,
         );
       }
     } else {
