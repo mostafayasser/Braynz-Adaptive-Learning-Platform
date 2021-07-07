@@ -99,6 +99,7 @@ class UserTopic {
     this.postTestScore,
     this.postTestAttempts,
     this.timesOfStudy,
+    this.status,
   });
 
   int id;
@@ -110,6 +111,7 @@ class UserTopic {
   double postTestScore;
   int postTestAttempts;
   int timesOfStudy;
+  String status;
 
   factory UserTopic.fromJson(Map<String, dynamic> json) => UserTopic(
         id: json["id"],
@@ -123,6 +125,7 @@ class UserTopic {
         postTestScore: json["postTestScore"].toDouble(),
         postTestAttempts: json["postTestAttempts"],
         timesOfStudy: json["timesOfStudy"],
+        status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -135,5 +138,6 @@ class UserTopic {
         "postTestScore": postTestScore,
         "postTestAttempts": postTestAttempts,
         "timesOfStudy": timesOfStudy,
+        "status": status,
       };
 }

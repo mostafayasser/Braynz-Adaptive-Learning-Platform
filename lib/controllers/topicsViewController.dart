@@ -14,6 +14,7 @@ class TopicsViewController extends BaseNotifier {
       : super(state: state);
 
   static List<Topic> topics = [];
+  static Map<int, String> statuses = {};
   Quiz preTest, postTest;
   static int topicIndex = 0;
   static Concept con;
@@ -27,7 +28,11 @@ class TopicsViewController extends BaseNotifier {
     con = conc;
     ids = topicIDs;
     topics = await api.getTopics(topicsIDs: ids);
-    print(topics.length);
+    var concept = auth.user.concepts.where((element) => element.id == con.id);
+
+    for (int i = 0; i < concept.first.topics.length; i++) {
+      statuses[concept.first.topics[i].id] = concept.first.topics[i].status;
+    }
     setIdle();
   }
 

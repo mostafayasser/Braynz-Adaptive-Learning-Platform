@@ -41,7 +41,7 @@ class HttpApi implements Api {
 
       if (credential.user != null) {
         var doc = await store.collection("users").doc(email).get();
-
+        await startSession(User.fromJson(doc.data()));
         return User.fromJson(doc.data());
       }
     } catch (e) {
@@ -60,6 +60,8 @@ class HttpApi implements Api {
       if (credential.user != null) {
         store.collection("users").doc(param['email']).set({
           "email": param['email'],
+          "name": param['name'],
+          "age": param['age'],
           "currentConcept": 0,
           "currentTopic": 0,
           "knowledgeLevel": "beginner",
@@ -69,6 +71,7 @@ class HttpApi implements Api {
           "numOfSessions": 0,
         });
         var doc = await store.collection("users").doc(param['email']).get();
+        await startSession(User.fromJson(doc.data()));
         return User.fromJson(doc.data());
       }
     } catch (e) {
@@ -93,6 +96,7 @@ class HttpApi implements Api {
           "id": conceptID,
           "muddiestPoint": 0,
           "finalTestScore": 0,
+          "status": "notCompleted",
           "finalTestAttempts": 0,
           "preTestScore": 0,
           "preTestAttempts": 0,
@@ -111,8 +115,25 @@ class HttpApi implements Api {
       return User.fromJson(doc.data());
     } catch (e) {
       print(e);
-      return null;
+      return user;
     }
+  }
+
+  changeConceptStatusToCompleted({int conceptID, User user}) async {
+    var doc = await store.collection("users").doc(user.email).get();
+    print(doc.get("concepts"));
+    List<dynamic> concepts = doc.get("concepts");
+    print(concepts[0]["id"]);
+    concepts.forEach((element) {
+      if (element["id"] == conceptID) {
+        element["status"] = "completed";
+      }
+    });
+
+    print(concepts);
+    store.collection("users").doc(user.email).update({"concepts": concepts});
+    doc = await store.collection("users").doc(user.email).get();
+    return User.fromJson(doc.data());
   }
 
   Future<User> addTopic({int conceptID, int topicID, User user}) async {
@@ -137,7 +158,7 @@ class HttpApi implements Api {
           "startDateTime": 0,
           "idleTimeInMinutes": 0,
           "preTestScore": 0,
-          "state": "notStarted",
+          "state": "notCompleted",
           "preTestAttempts": 0,
           "postTestScore": 0,
           "postTestAttempts": 0,
@@ -253,11 +274,12 @@ class HttpApi implements Api {
     Dashboard dashboard = Dashboard();
     try {
       var doc = await store.collection("users").doc(user.email).get();
-
+      int zeros = 0;
       List<dynamic> concepts = doc.get("concepts");
       if (concepts.isEmpty) return dashboard;
       concepts.forEach((element) {
         dashboard.finalTestsAvg += element["finalTestScore"];
+        if (element["finalTestScore"] == 0) zeros++;
 
         element["topics"].forEach((topic) {
           if (topic["state"] == "completed") dashboard.finishedTopicsNum++;
@@ -276,7 +298,8 @@ class HttpApi implements Api {
           dashboard.hoursOfStudy += element["endTime"] - element["startTime"];
       });
 
-      dashboard.finalTestsAvg = dashboard.finalTestsAvg / concepts.length;
+      dashboard.finalTestsAvg =
+          dashboard.finalTestsAvg / (concepts.length - zeros);
       dashboard.hoursOfStudy = dashboard.hoursOfStudy ~/ 3600000;
       print(dashboard.knowledgeLevel);
       return dashboard;
@@ -602,6 +625,8 @@ class HttpApi implements Api {
       await addTopic(topicID: topicID, conceptID: conceptID, user: user);
     }
     var doc = await store.collection("users").doc(user.email).get();
+    int completedTopicsNum = 0;
+    String knowledgeLevel = "";
     List<dynamic> concepts = doc.get("concepts");
     for (int i = 0; i < concepts.length; i++) {
       if (concepts[i]["id"] == conceptID) {
@@ -609,12 +634,23 @@ class HttpApi implements Api {
           if (topic["id"] == topicID) {
             topic["state"] = "completed";
           }
+          if (topic["state"] == "completed") {
+            completedTopicsNum++;
+          }
         });
       }
     }
-
+    if (completedTopicsNum <= 3)
+      knowledgeLevel = "Beginner";
+    else if (completedTopicsNum <= 6)
+      knowledgeLevel = "Intermediate";
+    else
+      knowledgeLevel = "Advanced";
     print(concepts);
-    store.collection("users").doc(user.email).update({"concepts": concepts});
+    store.collection("users").doc(user.email).update({
+      "concepts": concepts,
+      "knowledgeLevel": knowledgeLevel,
+    });
     doc = await store.collection("users").doc(user.email).get();
     return User.fromJson(doc.data());
   }

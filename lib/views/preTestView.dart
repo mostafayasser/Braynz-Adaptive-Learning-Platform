@@ -17,7 +17,11 @@ class PreTestView extends StatelessWidget {
   Widget build(BuildContext context) {
     return FocusWidget(
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+            title: Text(
+          "Pre Test",
+          style: TextStyle(color: Colors.white),
+        )),
         body: BaseWidget<TopicsViewController>(
             initState: (m) => m.getPreTest(preTestID),
             model: TopicsViewController(
@@ -26,6 +30,7 @@ class PreTestView extends StatelessWidget {
             ),
             builder: (context, model, child) {
               return SingleChildScrollView(
+                padding: EdgeInsets.all(15),
                 child: model.busy
                     ? Center(
                         child: CircularProgressIndicator(),
@@ -34,6 +39,13 @@ class PreTestView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
+                          Text(
+                            "Please note that you have to answer all question and answer them in order",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           ...List.generate(
                             model.preTest.numOfQuestions,
                             (index) => QuestionItem(
@@ -42,67 +54,80 @@ class PreTestView extends StatelessWidget {
                                   model.selectPreTestAnswer(answer, index),
                             ),
                           ),
-                          RaisedButton(
-                            onPressed: () async {
-                              bool passed = await model.calculatePreTestScore();
-                              List<int> numbers = model.wrongPreTestAnswers();
-                              if (passed) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    child: PassedDialog(
-                                      buttonText: "Proceed to material",
-                                      backButtonText: "topics view",
-                                      wrongAnswersNums: numbers,
-                                      score: double.parse(((model.preTestScore /
-                                                  model
-                                                      .preTest.numOfQuestions) *
-                                              100)
-                                          .toStringAsFixed(1)),
-                                      proceedOnPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                TopicMaterialView(),
-                                          ),
-                                        );
-                                      },
+                          Container(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                bool passed =
+                                    await model.calculatePreTestScore();
+                                List<int> numbers = model.wrongPreTestAnswers();
+                                if (passed) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      child: PassedDialog(
+                                        buttonText: "Proceed to material",
+                                        backButtonText: "topics view",
+                                        wrongAnswersNums: numbers,
+                                        score: double.parse(
+                                            ((model.preTestScore /
+                                                        model.preTest
+                                                            .numOfQuestions) *
+                                                    100)
+                                                .toStringAsFixed(1)),
+                                        proceedOnPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TopicMaterialView(),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                );
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    child: FailedDialog(
-                                      buttonText: "Proceed to material",
-                                      wrongQuestionsNumbers: numbers,
-                                      score: double.parse(((model.preTestScore /
-                                                  model
-                                                      .preTest.numOfQuestions) *
-                                              100)
-                                          .toStringAsFixed(1)),
-                                      proceedOnPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                TopicMaterialView(),
-                                          ),
-                                        );
-                                      },
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      child: FailedDialog(
+                                        buttonText: "Proceed to material",
+                                        wrongQuestionsNumbers: numbers,
+                                        score: double.parse(
+                                            ((model.preTestScore /
+                                                        model.preTest
+                                                            .numOfQuestions) *
+                                                    100)
+                                                .toStringAsFixed(1)),
+                                        proceedOnPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TopicMaterialView(),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
+                                  );
+                                }
+                                /* Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => TopicMaterialView(),
                                   ),
-                                );
-                              }
-                              /* Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => TopicMaterialView(),
-                                ),
-                              ); */
-                            },
-                            child: Text("Submit"),
+                                ); */
+                              },
+                              color: Theme.of(context).primaryColor,
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           )
                         ],
                       ),

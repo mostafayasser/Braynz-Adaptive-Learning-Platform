@@ -15,11 +15,11 @@ class Topic {
     this.preTestId,
     this.postTestId,
     this.material,
-    this.status,
+    this.imgUrl,
   });
 
   int id;
-  String name, status;
+  String name, imgUrl;
   int preTestId;
   int postTestId;
   Material material;
@@ -29,7 +29,7 @@ class Topic {
         name: json["name"],
         preTestId: json["preTestID"],
         postTestId: json["postTestID"],
-        status: json["status"],
+        imgUrl: json["imgUrl"],
         material: Material.fromJson(json["material"]),
       );
 
@@ -38,7 +38,7 @@ class Topic {
         "name": name,
         "preTestID": preTestId,
         "postTestID": postTestId,
-        "status": status,
+        "imgUrl": imgUrl,
         "material": material.toJson(),
       };
 }

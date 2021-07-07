@@ -22,7 +22,12 @@ class _QuestionItemState extends State<QuestionItem> {
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25), color: Colors.white),
+          borderRadius: BorderRadius.circular(25),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black26, blurRadius: 3, offset: Offset(0, 0))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

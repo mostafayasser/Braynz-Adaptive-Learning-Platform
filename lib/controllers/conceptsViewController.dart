@@ -21,10 +21,15 @@ class ConceptsViewController extends BaseNotifier {
   static Concept currentConcept;
   Dashboard dashboard;
 
-  getIntialData(User user) async {
+  getConcepts() async {
     setBusy();
     concepts = await api.getConcepts();
-    dashboard = await api.getUserDashboard(user);
+    setIdle();
+  }
+
+  getDashboard() async {
+    setBusy();
+    dashboard = await api.getUserDashboard(auth.user);
     setIdle();
   }
 
@@ -112,6 +117,16 @@ class ConceptsViewController extends BaseNotifier {
         }
       }
     }
+    if (user != null) auth.setUser(user: user);
+
+    setIdle();
+  }
+
+  completeConcept() async {
+    setBusy();
+    User user;
+    user = await api.changeConceptStatusToCompleted(
+        conceptID: currentConcept.id, user: auth.user);
     if (user != null) auth.setUser(user: user);
 
     setIdle();

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-class PreTestDialog extends StatelessWidget {
-  final yesOnPressed, noOnPressed;
+class StartTestDialog extends StatelessWidget {
+  final yesOnPressed, noOnPressed, message;
 
-  const PreTestDialog({
+  const StartTestDialog({
     Key key,
     this.yesOnPressed,
     this.noOnPressed,
+    this.message,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class PreTestDialog extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Would you like to take a pre test?"),
+          Text("Would you like to take a $message?"),
           SizedBox(
             height: 10,
           ),
@@ -35,9 +36,9 @@ class PreTestDialog extends StatelessWidget {
               RaisedButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25)),
-                color: Colors.red,
+                color: Colors.grey,
                 child: Text(
-                  "No",
+                  "Skip",
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () => noOnPressed(),

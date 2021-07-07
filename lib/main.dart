@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:graduation_project/views/splashScreen.dart';
 
@@ -32,6 +33,10 @@ class MyApp extends StatelessWidget {
           providers: providers,
           child: MaterialApp(
             routes: Routes.routes,
+            theme: ThemeData(
+              textTheme: GoogleFonts.nunitoSansTextTheme(),
+              primaryColor: Color(0xFF3C096C),
+            ),
             home: SplashView(),
             debugShowCheckedModeBanner: false,
             /* supportedLocales: [const Locale('en'), const Locale('ar')],

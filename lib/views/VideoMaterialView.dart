@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:graduation_project/controllers/topicsViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
-import 'package:graduation_project/views/skipPostTestView.dart';
+import 'package:graduation_project/ui/widgets/preTestDialog.dart';
+import 'package:graduation_project/views/postTestView.dart';
+import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -47,11 +49,35 @@ class _VideoMaterialViewState extends State<VideoMaterialView> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => SkipPostTestView(
-                      postTestID: TopicsViewController
-                          .topics[TopicsViewController.topicIndex].postTestId,
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    backgroundColor: Colors.transparent,
+                    child: StartTestDialog(
+                      message: "post test",
+                      yesOnPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => PostTestView(
+                              postTestID: TopicsViewController
+                                  .topics[TopicsViewController.topicIndex]
+                                  .postTestId,
+                            ),
+                          ),
+                        );
+                      },
+                      noOnPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => TopicsView(
+                              concept: TopicsViewController.con,
+                              topicsIDs: TopicsViewController.con.topics,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 );

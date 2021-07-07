@@ -14,7 +14,11 @@ class ConceptPreTestView extends StatelessWidget {
   Widget build(BuildContext context) {
     return FocusWidget(
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+            title: Text(
+          "Pre Test",
+          style: TextStyle(color: Colors.white),
+        )),
         body: BaseWidget<ConceptsViewController>(
             initState: (m) => m.getTest(
                   ConceptsViewController.currentConcept.preTestID,
@@ -27,6 +31,7 @@ class ConceptPreTestView extends StatelessWidget {
             builder: (context, model, child) {
               return Center(
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.all(15),
                   child: model.busy
                       ? Center(
                           child: CircularProgressIndicator(),
@@ -35,6 +40,13 @@ class ConceptPreTestView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
+                            Text(
+                              "Please note that you have to answer all question and answer them in order",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
                             ...List.generate(
                               model.test.numOfQuestions,
                               (index) => QuestionItem(
@@ -47,106 +59,123 @@ class ConceptPreTestView extends StatelessWidget {
                                 ? Center(
                                     child: CircularProgressIndicator(),
                                   )
-                                : RaisedButton(
-                                    onPressed: model.testAnswers.isEmpty
-                                        ? () {
-                                            print("in");
-                                          }
-                                        : () async {
-                                            bool passed = await model
-                                                .calculateTestScore("pre");
-                                            List<String> reviseTopics =
-                                                model.calculateEachTopicScore();
-                                            if (passed) {
-                                              model.changeTopicsStateToComplete(
-                                                topics: ConceptsViewController
-                                                    .currentConcept.topics,
-                                                state: "passed",
-                                              );
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) => Dialog(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  child: PassedDialog(
-                                                    buttonText:
-                                                        "Proceed to topics",
-                                                    backButtonText:
-                                                        "concepts view",
-                                                    wrongAnswersNums: model
-                                                        .wrongTestAnswers(),
-                                                    score: double.parse(((model
-                                                                    .testScore /
-                                                                model.test
-                                                                    .numOfQuestions) *
-                                                            100)
-                                                        .toStringAsFixed(1)),
-                                                    proceedOnPressed: () {
-                                                      Navigator.of(context)
-                                                          .pushReplacement(
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              TopicsView(
-                                                            concept:
-                                                                ConceptsViewController
-                                                                    .currentConcept,
-                                                            topicsIDs:
-                                                                ConceptsViewController
-                                                                    .currentConcept
-                                                                    .topics,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              model.changeTopicsStateToComplete(
-                                                topics: reviseTopics,
-                                                state: "failed",
-                                              );
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) => Dialog(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  child: FailedFinalTestDialog(
-                                                    buttonText:
-                                                        "Proceed to topics",
-                                                    wrongQuestionsNumbers: model
-                                                        .wrongTestAnswers(),
-                                                    failureMessage:
-                                                        "You need to study following topic(s)",
-                                                    score: double.parse(((model
-                                                                .testScore /
-                                                            model.test
-                                                                .numOfQuestions))
-                                                        .toStringAsFixed(1)),
-                                                    reviseTopics: reviseTopics,
-                                                    proceedOnPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              TopicsView(
-                                                            concept:
-                                                                ConceptsViewController
-                                                                    .currentConcept,
-                                                            topicsIDs:
-                                                                ConceptsViewController
-                                                                    .currentConcept
-                                                                    .topics,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              );
+                                : Container(
+                                    width: double.infinity,
+                                    child: RaisedButton(
+                                      onPressed: model.testAnswers.isEmpty
+                                          ? () {
+                                              print("in");
                                             }
-                                          },
-                                    child: Text("Submit"),
+                                          : () async {
+                                              bool passed = await model
+                                                  .calculateTestScore("pre");
+                                              List<String> reviseTopics = model
+                                                  .calculateEachTopicScore();
+                                              if (passed) {
+                                                model
+                                                    .changeTopicsStateToComplete(
+                                                  topics: ConceptsViewController
+                                                      .currentConcept.topics,
+                                                  state: "passed",
+                                                );
+                                                model.completeConcept();
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => Dialog(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    child: PassedDialog(
+                                                      buttonText:
+                                                          "Proceed to topics",
+                                                      backButtonText:
+                                                          "concepts view",
+                                                      wrongAnswersNums: model
+                                                          .wrongTestAnswers(),
+                                                      score: double.parse(((model
+                                                                      .testScore /
+                                                                  model.test
+                                                                      .numOfQuestions) *
+                                                              100)
+                                                          .toStringAsFixed(1)),
+                                                      proceedOnPressed: () {
+                                                        Navigator.of(context)
+                                                            .pushReplacement(
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    TopicsView(
+                                                              concept:
+                                                                  ConceptsViewController
+                                                                      .currentConcept,
+                                                              topicsIDs:
+                                                                  ConceptsViewController
+                                                                      .currentConcept
+                                                                      .topics,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              } else {
+                                                model
+                                                    .changeTopicsStateToComplete(
+                                                  topics: reviseTopics,
+                                                  state: "failed",
+                                                );
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => Dialog(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    child:
+                                                        FailedFinalTestDialog(
+                                                      buttonText:
+                                                          "Proceed to topics",
+                                                      wrongQuestionsNumbers: model
+                                                          .wrongTestAnswers(),
+                                                      failureMessage:
+                                                          "You need to study following topic(s)",
+                                                      score: double.parse(((model
+                                                                  .testScore /
+                                                              model.test
+                                                                  .numOfQuestions))
+                                                          .toStringAsFixed(1)),
+                                                      reviseTopics:
+                                                          reviseTopics,
+                                                      proceedOnPressed: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    TopicsView(
+                                                              concept:
+                                                                  ConceptsViewController
+                                                                      .currentConcept,
+                                                              topicsIDs:
+                                                                  ConceptsViewController
+                                                                      .currentConcept
+                                                                      .topics,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                      color: Theme.of(context).primaryColor,
+                                      child: Text(
+                                        "Submit",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
                                   )
                           ],
                         ),

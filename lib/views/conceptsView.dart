@@ -5,18 +5,24 @@ import 'package:graduation_project/models/user.dart';
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/preTestDialog.dart';
 import 'package:graduation_project/views/conceptPreTestView.dart';
+import 'package:graduation_project/views/dashboardView.dart';
 import 'package:graduation_project/views/loginView.dart';
 import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
 class ConceptsView extends StatelessWidget {
+  final List<Color> _colors = [
+    Color(0xFFFFDAB9),
+    Color(0xFFFBC4AB),
+    Color(0xFFF8AD9D)
+  ];
   @override
   Widget build(BuildContext context) {
     return FocusWidget(
       child: BaseWidget<ConceptsViewController>(
           initState: (m) {
-            m.getIntialData(m.auth.user);
+            m.getConcepts();
           },
           model: ConceptsViewController(
             api: Provider.of<Api>(context),
@@ -27,18 +33,20 @@ class ConceptsView extends StatelessWidget {
               appBar: AppBar(
                 title: Text(
                   "Concepts View",
-                  style: TextStyle(
+                  style: Theme.of(context).textTheme.headline6.copyWith(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
-                centerTitle: false,
+                centerTitle: true,
                 leading: Container(),
+                backgroundColor: Color(0xFF3C096C),
                 actions: [
                   IconButton(
                       icon: Icon(
                         Icons.exit_to_app,
                         color: Colors.white,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        await model.api.endSession(model.auth.user);
                         model.auth.logout();
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
@@ -65,43 +73,87 @@ class ConceptsView extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Hello",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 50),
-                                    ),
-                                    Text(
-                                      "${model.auth.user.name},",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 50),
+                                      "Hello ${model.auth.user.name},",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline4
+                                          .copyWith(
+                                            color: Colors.black,
+                                          ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
                             SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.05,
+                              height: MediaQuery.of(context).size.height * 0.02,
                             ),
-                            Text("Dashboard"),
-                            if (model.dashboard != null)
-                              Column(
-                                children: [
-                                  Text(
-                                    "Sessions Num: ${model.dashboard.studySessionsNum.toString()}",
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => DashboardView(),
                                   ),
-                                  Text(
-                                    "Finals Avg: ${model.dashboard.finalTestsAvg.toString()}",
-                                  ),
-                                  Text(
-                                    "Finished Topics: ${model.dashboard.finishedTopicsNum.toString()}",
-                                  ),
-                                  Text(
-                                      "Knowledge Level: ${model.dashboard.knowledgeLevel}"),
-                                  Text(
-                                      "HoursOfStudy: ${model.dashboard.hoursOfStudy.toString()}"),
-                                ],
+                                );
+                              },
+                              child: Container(
+                                width: 110,
+                                height: 100,
+                                padding: EdgeInsets.all(20),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                    //borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 3,
+                                          offset: Offset(0, 0))
+                                    ]),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.dashboard_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      "Dashboard",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          .copyWith(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                    )
+                                  ],
+                                ),
                               ),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Choose a concept to study",
+                                      style:
+                                          Theme.of(context).textTheme.headline6,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -123,7 +175,8 @@ class ConceptsView extends StatelessWidget {
                                       context: context,
                                       builder: (context) => Dialog(
                                         backgroundColor: Colors.transparent,
-                                        child: PreTestDialog(
+                                        child: StartTestDialog(
+                                          message: "pre test",
                                           yesOnPressed: () {
                                             Navigator.of(context).pop();
                                             Navigator.of(context).push(
@@ -154,18 +207,13 @@ class ConceptsView extends StatelessWidget {
                                 },
                                 child: Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.8,
+                                      MediaQuery.of(context).size.width * 0.9,
                                   height:
                                       MediaQuery.of(context).size.height * 0.1,
-                                  padding: EdgeInsets.all(20),
-                                  margin: EdgeInsets.only(bottom: 10),
+                                  margin: EdgeInsets.only(bottom: 20),
                                   decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image:
-                                              AssetImage("assets/Joomla.jpg"),
-                                          fit: BoxFit.cover),
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
+                                      color: _colors[index],
+                                      borderRadius: BorderRadius.circular(10),
                                       boxShadow: [
                                         BoxShadow(
                                             color: Colors.black26,
@@ -173,12 +221,67 @@ class ConceptsView extends StatelessWidget {
                                             offset: Offset(0, 0))
                                       ]),
                                   alignment: Alignment.center,
-                                  child: Text(
-                                    model.concepts[index].name,
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10)),
+                                        child: Image.network(
+                                          model.concepts[index].imgUrl,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.3,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.1,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  model.concepts[index].name,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle1,
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                  "${model.concepts[index].topics.length} Topics",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle1,
+                                                ),
+                                              ],
+                                            ),
+                                            Icon(
+                                              Icons.chevron_right_rounded,
+                                              color: Colors.white,
+                                              size: 50,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),

@@ -123,7 +123,7 @@ class AuthenticationService {
     if (userLoged) {
       _user =
           User.fromJson(json.decode(Preference.getString(PrefKeys.userData)));
-      Logger().i(_user.toJson());
+      print(_user.toJson());
       print('\n\n\n\n');
     }
   }

@@ -18,7 +18,11 @@ class PostTestView extends StatelessWidget {
   Widget build(BuildContext context) {
     return FocusWidget(
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+            title: Text(
+          "Post Test",
+          style: TextStyle(color: Colors.white),
+        )),
         body: BaseWidget<TopicsViewController>(
             initState: (m) => m.getPostTest(postTestID),
             model: TopicsViewController(
@@ -27,6 +31,7 @@ class PostTestView extends StatelessWidget {
             ),
             builder: (context, model, child) {
               return SingleChildScrollView(
+                padding: EdgeInsets.all(15),
                 child: model.busy
                     ? Center(
                         child: CircularProgressIndicator(),
@@ -35,6 +40,13 @@ class PostTestView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
+                          Text(
+                            "Please note that you have to answer all question and answer them in order",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           ...List.generate(
                             model.postTest.numOfQuestions,
                             (index) => QuestionItem(
@@ -43,102 +55,115 @@ class PostTestView extends StatelessWidget {
                                   model.selectPostTestAnswer(answer, index),
                             ),
                           ),
-                          RaisedButton(
-                            onPressed: () async {
-                              model.calculatePostTestScore();
-                              User user = await model.api.endTopicTime(
-                                topicID: TopicsViewController
-                                    .topics[TopicsViewController.topicIndex].id,
-                                conceptID: TopicsViewController.con.id,
-                                user: model.auth.user,
-                              );
-                              model.auth.setUser(user: user);
-                              bool passed =
-                                  await model.calculatePostTestScore();
-                              if (passed) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    child: PassedDialog(
-                                      buttonText: "Go to topics view",
-                                      backButtonText: "materials",
-                                      wrongAnswersNums:
-                                          model.wrongPostTestAnswers(),
-                                      score: double.parse(
-                                          ((model.postTestScore /
-                                                      model.postTest
-                                                          .numOfQuestions) *
-                                                  100)
-                                              .toStringAsFixed(1)),
-                                      proceedOnPressed: () async {
-                                        user =
-                                            await model.api.completeTopicState(
-                                          topicID: TopicsViewController
-                                              .topics[TopicsViewController
-                                                  .topicIndex]
-                                              .id,
-                                          conceptID:
-                                              TopicsViewController.con.id,
-                                          user: model.auth.user,
-                                        );
-                                        model.auth.setUser(user: user);
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) => TopicsView(
-                                              topicsIDs: TopicsViewController
-                                                  .con.topics,
-                                              concept: TopicsViewController.con,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                          Container(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                model.calculatePostTestScore();
+                                User user = await model.api.endTopicTime(
+                                  topicID: TopicsViewController
+                                      .topics[TopicsViewController.topicIndex]
+                                      .id,
+                                  conceptID: TopicsViewController.con.id,
+                                  user: model.auth.user,
                                 );
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    child: FailedDialog(
-                                      buttonText: "Go to topics page",
-                                      wrongQuestionsNumbers:
-                                          model.wrongPostTestAnswers(),
-                                      score: double.parse(
-                                          ((model.postTestScore /
-                                                      model.postTest
-                                                          .numOfQuestions) *
-                                                  100)
-                                              .toStringAsFixed(1)),
-                                      proceedOnPressed: () async {
-                                        /* user =
-                                            await model.api.completeTopicState(
-                                          topicID: TopicsViewController
-                                              .topics[TopicsViewController
-                                                  .topicIndex]
-                                              .id,
-                                          conceptID:
-                                              TopicsViewController.con.id,
-                                          user: model.auth.user,
-                                        );
-                                        model.auth.setUser(user: user); */
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) => TopicsView(
-                                              topicsIDs: TopicsViewController
-                                                  .con.topics,
-                                              concept: TopicsViewController.con,
+                                model.auth.setUser(user: user);
+                                bool passed =
+                                    await model.calculatePostTestScore();
+                                if (passed) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      child: PassedDialog(
+                                        buttonText: "Go to topics view",
+                                        backButtonText: "materials",
+                                        wrongAnswersNums:
+                                            model.wrongPostTestAnswers(),
+                                        score: double.parse(
+                                            ((model.postTestScore /
+                                                        model.postTest
+                                                            .numOfQuestions) *
+                                                    100)
+                                                .toStringAsFixed(1)),
+                                        proceedOnPressed: () async {
+                                          user = await model.api
+                                              .completeTopicState(
+                                            topicID: TopicsViewController
+                                                .topics[TopicsViewController
+                                                    .topicIndex]
+                                                .id,
+                                            conceptID:
+                                                TopicsViewController.con.id,
+                                            user: model.auth.user,
+                                          );
+                                          model.auth.setUser(user: user);
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => TopicsView(
+                                                topicsIDs: TopicsViewController
+                                                    .con.topics,
+                                                concept:
+                                                    TopicsViewController.con,
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Text("Submit"),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      child: FailedDialog(
+                                        buttonText: "Go to topics page",
+                                        wrongQuestionsNumbers:
+                                            model.wrongPostTestAnswers(),
+                                        score: double.parse(
+                                            ((model.postTestScore /
+                                                        model.postTest
+                                                            .numOfQuestions) *
+                                                    100)
+                                                .toStringAsFixed(1)),
+                                        proceedOnPressed: () async {
+                                          /* user =
+                                              await model.api.completeTopicState(
+                                            topicID: TopicsViewController
+                                                .topics[TopicsViewController
+                                                    .topicIndex]
+                                                .id,
+                                            conceptID:
+                                                TopicsViewController.con.id,
+                                            user: model.auth.user,
+                                          );
+                                          model.auth.setUser(user: user); */
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => TopicsView(
+                                                topicsIDs: TopicsViewController
+                                                    .con.topics,
+                                                concept:
+                                                    TopicsViewController.con,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              color: Theme.of(context).primaryColor,
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           )
                         ],
                       ),
