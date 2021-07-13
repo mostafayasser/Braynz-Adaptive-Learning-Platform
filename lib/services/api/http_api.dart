@@ -142,6 +142,8 @@ class HttpApi implements Api {
       User user,
       String state = "notCompleted"}) async {
     try {
+      int completedTopicsNum = 0;
+
       bool found = false;
       user.concepts.forEach((element) {
         if (element.id == conceptID)
@@ -149,13 +151,15 @@ class HttpApi implements Api {
             if (topic.id == topicID) found = true;
           });
       });
+
+      String knowledgeLevel = "";
+      var doc = await store.collection("users").doc(user.email).get();
+      List<dynamic> concepts = doc.get("concepts");
+      int index = -1;
+      for (int i = 0; i < concepts.length; i++) {
+        if (concepts[i]["id"] == conceptID) index = i;
+      }
       if (!found) {
-        var doc = await store.collection("users").doc(user.email).get();
-        List<dynamic> concepts = doc.get("concepts");
-        int index = -1;
-        for (int i = 0; i < concepts.length; i++) {
-          if (concepts[i]["id"] == conceptID) index = i;
-        }
         concepts[index]["topics"].add({
           "id": topicID,
           "endDateTime": 0,
@@ -168,19 +172,36 @@ class HttpApi implements Api {
           "postTestAttempts": 0,
           "timesOfStudy": 0,
         });
-
-        store
-            .collection("users")
-            .doc(user.email)
-            .update({"concepts": concepts});
-        store
-            .collection("users")
-            .doc(user.email)
-            .update({"currentTopic": topicID});
-        doc = await store.collection("users").doc(user.email).get();
-        return User.fromJson(doc.data());
+      } else {
+        concepts[index]["topics"].forEach((topic) {
+          if (topic["id"] == topicID) {
+            topic["state"] = "completed";
+          }
+        });
       }
-      return user;
+      for (int i = 0; i < concepts.length; i++) {
+        concepts[i]["topics"].forEach((topic) {
+          if (topic["state"] == "completed") {
+            completedTopicsNum++;
+          }
+        });
+      }
+      if (completedTopicsNum <= 3)
+        knowledgeLevel = "Beginner";
+      else if (completedTopicsNum <= 6)
+        knowledgeLevel = "Intermediate";
+      else
+        knowledgeLevel = "Advanced";
+
+      await store.collection("users").doc(user.email).update({
+        "concepts": concepts,
+        "currentTopic": topicID,
+        "knowledgeLevel": knowledgeLevel,
+      });
+
+      doc = await store.collection("users").doc(user.email).get();
+      print(doc.data()["concepts"][index]);
+      return User.fromJson(doc.data());
     } catch (e) {
       print(e);
       return null;
@@ -626,12 +647,11 @@ class HttpApi implements Api {
   completeTopicState(
       {int topicID, int conceptID, User user, bool add = false}) async {
     if (add) {
-      User u = await addTopic(
+      return addTopic(
           topicID: topicID,
           conceptID: conceptID,
           user: user,
           state: "completed");
-      return u;
     }
     var doc = await store.collection("users").doc(user.email).get();
     int completedTopicsNum = 0;
@@ -664,16 +684,21 @@ class HttpApi implements Api {
     return User.fromJson(doc.data());
   }
 
-  rateMaterial({int topicID, String type, int index, double rate}) async {
+  rateMaterial({int topicID, String type, String name, double rate}) async {
     var doc = await store.collection("topics").doc(topicID.toString()).get();
 
     var data = doc.data();
-    if (data["material"][type][index]["rate"] != 0 && rate != 0)
-      data["material"][type][index]["rate"] =
-          (data["material"][type][index]["rate"] + rate) / 2;
-    else if (data["material"][type][index]["rate"] == 0)
-      data["material"][type][index]["rate"] =
-          data["material"][type][index]["rate"] + rate;
+    for (int index = 0; index < data["material"][type].length; index++) {
+      if (data["material"][type][index]["name"] == name) {
+        if (data["material"][type][index]["rate"] != 0 && rate != 0)
+          data["material"][type][index]["rate"] =
+              (data["material"][type][index]["rate"] + rate) / 2;
+        else if (data["material"][type][index]["rate"] == 0)
+          data["material"][type][index]["rate"] =
+              data["material"][type][index]["rate"] + rate;
+      }
+    }
+
     store.collection("topics").doc(topicID.toString()).update(data);
   }
 }

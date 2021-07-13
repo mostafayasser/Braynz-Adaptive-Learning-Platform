@@ -50,11 +50,13 @@ class DashboardView extends StatelessWidget {
                             height: MediaQuery.of(context).size.height * 0.2,
                             title: "Finals Average Score",
                             data: CircularPercentIndicator(
-                              radius: 60.0,
+                              radius: 70.0,
                               lineWidth: 5.0,
                               percent: model.dashboard.finalTestsAvg / 100,
                               center: new Text(
-                                "${model.dashboard.finalTestsAvg.toStringAsFixed(1)}%",
+                                model.dashboard.finalTestsAvg != 0
+                                    ? "${model.dashboard.finalTestsAvg.toStringAsFixed(1)}%"
+                                    : "0%",
                                 style: Theme.of(context)
                                     .textTheme
                                     .subtitle2
@@ -73,11 +75,10 @@ class DashboardView extends StatelessWidget {
                                 color: Colors.red,
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 height:
-                                    MediaQuery.of(context).size.height * 0.1,
+                                    MediaQuery.of(context).size.height * 0.12,
                                 title: "Finished Topics",
                                 data: Text(
-                                  "9",
-                                  //model.dashboard.finishedTopicsNum.toString(),
+                                  model.dashboard.finishedTopicsNum.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .subtitle2
@@ -87,12 +88,11 @@ class DashboardView extends StatelessWidget {
                               Item(
                                 color: Colors.green,
                                 height:
-                                    MediaQuery.of(context).size.height * 0.1,
+                                    MediaQuery.of(context).size.height * 0.12,
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 title: "Knowledge Level",
                                 data: Text(
-                                  "Advanced",
-                                  // model.dashboard.knowledgeLevel,
+                                  model.dashboard.knowledgeLevel,
                                   style: Theme.of(context)
                                       .textTheme
                                       .subtitle2
@@ -110,12 +110,11 @@ class DashboardView extends StatelessWidget {
                               Item(
                                 color: Colors.orange[600],
                                 height:
-                                    MediaQuery.of(context).size.height * 0.1,
+                                    MediaQuery.of(context).size.height * 0.12,
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 title: "Study Sessions",
                                 data: Text(
-                                  "6",
-                                  //model.dashboard.studySessionsNum.toString(),
+                                  model.dashboard.studySessionsNum.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .subtitle2
@@ -125,12 +124,11 @@ class DashboardView extends StatelessWidget {
                               Item(
                                 color: Colors.grey[600],
                                 height:
-                                    MediaQuery.of(context).size.height * 0.1,
+                                    MediaQuery.of(context).size.height * 0.12,
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 title: "Hours of study",
                                 data: Text(
-                                  "5",
-                                  //model.dashboard.hoursOfStudy.toString(),
+                                  model.dashboard.hoursOfStudy.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .subtitle2

@@ -2,7 +2,7 @@ import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/learningStyleTestViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
-import 'package:graduation_project/views/conceptsView.dart';
+
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
@@ -193,13 +193,15 @@ class LearningStyleTestPage extends StatelessWidget {
                     RaisedButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
-                      onPressed: () {
-                        model.calculateStyles();
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => ConceptsView(),
-                          ),
-                        );
+                      onPressed: () async {
+                        bool done = await model.calculateStyles(context);
+                        if (!done)
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              child: Text("There is an error please try again"),
+                            ),
+                          );
                       },
                       color: Colors.blue,
                       child: Text(

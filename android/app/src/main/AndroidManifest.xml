@@ -2,8 +2,8 @@
     package="com.example.graduationproject">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="graduation_project"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Braynz"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

@@ -19,7 +19,16 @@ class TopicsViewController extends BaseNotifier {
   static int topicIndex = 0;
   static Concept con;
   int preTestScore = 0, postTestScore = 0;
-  List<bool> preTestAnswers = [], postTestAnswers = [];
+  List<bool> preTestAnswers = [
+        false,
+        false,
+        false,
+      ],
+      postTestAnswers = [
+        false,
+        false,
+        false,
+      ];
   PDFDocument pdf;
   static List<dynamic> ids = [];
 

@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 class PassedDialog extends StatelessWidget {
   final buttonText,
       proceedOnPressed,
+      backOnPressed,
       backButtonText,
       wrongAnswersNums,
-      score,
-      conceptPreTest,
-      conceptFinalTest;
+      score;
 
   const PassedDialog({
     Key key,
@@ -16,8 +15,7 @@ class PassedDialog extends StatelessWidget {
     this.backButtonText,
     this.wrongAnswersNums,
     this.score,
-    this.conceptPreTest = false,
-    this.conceptFinalTest = false,
+    this.backOnPressed,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -93,13 +91,7 @@ class PassedDialog extends StatelessWidget {
                   "Back to $backButtonText",
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (!conceptFinalTest) {
-                    Navigator.of(context).pop();
-                    if (!conceptPreTest) Navigator.of(context).pop();
-                  }
-                },
+                onPressed: () => backOnPressed(),
               ),
             ],
           )

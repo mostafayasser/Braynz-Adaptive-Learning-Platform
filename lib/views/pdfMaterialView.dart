@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +8,15 @@ import 'package:graduation_project/controllers/topicsViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/preTestDialog.dart';
 import 'package:graduation_project/views/postTestView.dart';
+import 'package:graduation_project/views/topicMaterialView.dart';
 import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
 class PDFMaterialView extends StatefulWidget {
-  final pdfData, index;
+  final pdfData;
 
-  const PDFMaterialView({Key key, this.pdfData, this.index}) : super(key: key);
+  const PDFMaterialView({Key key, this.pdfData}) : super(key: key);
 
   @override
   _PDFMaterialViewState createState() => _PDFMaterialViewState();
@@ -30,6 +33,22 @@ class _PDFMaterialViewState extends State<PDFMaterialView> {
           centerTitle: true,
           title: Text(
             widget.pdfData.name,
+          ),
+          leading: IconButton(
+            icon: Platform.isIOS
+                ? Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  )
+                : Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => TopicMaterialView(),
+              ),
+            ),
           ),
           actions: [
             FlatButton(
@@ -98,7 +117,6 @@ class _PDFMaterialViewState extends State<PDFMaterialView> {
                               initialRating: 0,
                               minRating: 1,
                               direction: Axis.horizontal,
-                              allowHalfRating: true,
                               itemCount: 5,
                               itemSize: 25,
                               itemBuilder: (context, _) => Icon(
@@ -123,12 +141,38 @@ class _PDFMaterialViewState extends State<PDFMaterialView> {
                               onPressed: () {
                                 print("rate = $rate");
                                 model.api.rateMaterial(
-                                  index: widget.index,
+                                  name: widget.pdfData.name,
                                   rate: rate,
                                   topicID: TopicsViewController
                                       .topics[TopicsViewController.topicIndex]
                                       .id,
                                   type: "pdf",
+                                );
+                                TopicsViewController
+                                    .topics[TopicsViewController.topicIndex]
+                                    .material
+                                    .pdfMaterial
+                                    .forEach((element) {
+                                  if (element.name == widget.pdfData.name) {
+                                    if (element.rate != 0 && rate != 0)
+                                      element.rate = (element.rate + rate) / 2;
+                                    else if (element.rate == 0)
+                                      element.rate = element.rate + rate;
+                                  }
+                                });
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.05,
+                                      child: Center(
+                                          child:
+                                              Text("Thanks for your rating")),
+                                    ),
+                                  ),
                                 );
                               },
                             )

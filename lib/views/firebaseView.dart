@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseView extends StatelessWidget {
@@ -9,7 +9,7 @@ class FirebaseView extends StatelessWidget {
       body: Center(
         child: FlatButton(
             onPressed: () {
-              final FirebaseFirestore store = FirebaseFirestore.instance;
+              //final FirebaseFirestore store = FirebaseFirestore.instance;
               /* store.collection("topics").doc("9").set({
                 "id": 9,
                 "material": {
@@ -44,7 +44,7 @@ class FirebaseView extends StatelessWidget {
                 "preTestID": 0,
                 "postTestID": 0,
               }); */
-              store
+              /* store
                   .collection("tests")
                   .doc("13")
                   .collection("question9")
@@ -62,7 +62,53 @@ class FirebaseView extends StatelessWidget {
                     "9. Find the output of below program.\nint main()\n{\nfor(int i=1;i<=2;i++)\n{\nfor(int j=i;j<=2;j++)\ncout<<i<<@;\n}\n}",
                 "topicName": "Nested loops",
                 "topicID": 3
-              });
+              }); */
+              showDialog(
+                context: context,
+                builder: (context) => Dialog(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25)),
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "styles[0]" == "active"
+                              ? "Your learning style is:\n\nActive: Learn by trying things\n"
+                              : "Your learning style is:\n\nReflective: Learn by thinking things out\n",
+                        ),
+                        Text(
+                          "styles[1]" == "visual"
+                              ? "Visual: Remember what you see"
+                              : "Verbal: Prefer written content",
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25)),
+                            color: Color(0xFF3C096C),
+                            onPressed: () {},
+                            child: Text(
+                              "Next",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              );
             },
             child: Text("submit")),
       ),

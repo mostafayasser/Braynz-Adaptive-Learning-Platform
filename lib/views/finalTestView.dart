@@ -6,6 +6,7 @@ import 'package:graduation_project/ui/widgets/failedFinalTestDialog.dart';
 import 'package:graduation_project/ui/widgets/passedDialog.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
 import 'package:graduation_project/views/conceptsView.dart';
+import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
@@ -69,12 +70,14 @@ class FinalTestView extends StatelessWidget {
                                         List<String> reviseTopics =
                                             model.calculateEachTopicScore();
                                         if (passed) {
-                                          model.changeTopicsStateToComplete(
+                                          await model.completeConcept();
+                                          await model
+                                              .changeTopicsStateToComplete(
                                             topics: ConceptsViewController
                                                 .currentConcept.topics,
                                             state: "passed",
                                           );
-                                          model.completeConcept();
+
                                           showDialog(
                                             context: context,
                                             builder: (context) => Dialog(
@@ -92,13 +95,29 @@ class FinalTestView extends StatelessWidget {
                                                                 .numOfQuestions) *
                                                         100)
                                                     .toStringAsFixed(1)),
-                                                conceptFinalTest: true,
                                                 proceedOnPressed: () {
                                                   Navigator.of(context)
                                                       .pushReplacement(
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           ConceptsView(),
+                                                    ),
+                                                  );
+                                                },
+                                                backOnPressed: () {
+                                                  Navigator.of(context)
+                                                      .pushReplacement(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          TopicsView(
+                                                        concept:
+                                                            ConceptsViewController
+                                                                .currentConcept,
+                                                        topicsIDs:
+                                                            ConceptsViewController
+                                                                .currentConcept
+                                                                .topics,
+                                                      ),
                                                     ),
                                                   );
                                                 },

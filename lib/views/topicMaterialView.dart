@@ -37,23 +37,24 @@ class TopicMaterialView extends StatelessWidget {
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 leading: IconButton(
-                    icon: Platform.isIOS
-                        ? Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                          )
-                        : Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => TopicsView(
-                              topicsIDs: TopicsViewController.ids,
-                              concept: TopicsViewController.con,
-                            ),
-                          ),
-                        )),
+                  icon: Platform.isIOS
+                      ? Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        )
+                      : Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ),
+                  onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => TopicsView(
+                        topicsIDs: TopicsViewController.ids,
+                        concept: TopicsViewController.con,
+                      ),
+                    ),
+                  ),
+                ),
               ),
               body: SingleChildScrollView(
                 padding: EdgeInsets.all(15),
@@ -90,7 +91,6 @@ visualMaterial(context) {
                   .topics[TopicsViewController.topicIndex]
                   .material
                   .videoMaterial[0],
-              index: 0,
             ),
           ),
         ),
@@ -118,7 +118,6 @@ visualMaterial(context) {
                       .topics[TopicsViewController.topicIndex]
                       .material
                       .videoMaterial[1],
-                  index: 1,
                 ),
               ),
             ),
@@ -152,7 +151,6 @@ visualMaterial(context) {
                         .topics[TopicsViewController.topicIndex]
                         .material
                         .pdfMaterial[index],
-                    index: index,
                   ),
                 ),
               ),
@@ -195,7 +193,6 @@ verbalMaterial(context) {
                   .topics[TopicsViewController.topicIndex]
                   .material
                   .pdfMaterial[0],
-              index: 0,
             ),
           ),
         ),
@@ -223,7 +220,6 @@ verbalMaterial(context) {
                       .topics[TopicsViewController.topicIndex]
                       .material
                       .pdfMaterial[1],
-                  index: 1,
                 ),
               ),
             ),
@@ -257,7 +253,6 @@ verbalMaterial(context) {
                         .topics[TopicsViewController.topicIndex]
                         .material
                         .videoMaterial[index],
-                    index: index,
                   ),
                 ),
               ),
@@ -296,7 +291,7 @@ class MaterialCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: MediaQuery.of(context).size.height * 0.12,
       margin: EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
           color: Colors.white,
@@ -314,7 +309,7 @@ class MaterialCard extends StatelessWidget {
             child: Image.asset(
               image,
               width: MediaQuery.of(context).size.width * 0.3,
-              height: MediaQuery.of(context).size.height * 0.1,
+              height: MediaQuery.of(context).size.height * 0.12,
               fit: BoxFit.fill,
             ),
           ),

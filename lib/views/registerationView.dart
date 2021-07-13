@@ -87,6 +87,7 @@ class RegisterationView extends StatelessWidget {
                     ),
                     CustomTextField(
                       controller: model.passwordController,
+                      obscure: true,
                       hintText: "Enter Password",
                       prefixIcon: Icon(Icons.lock_outline_rounded),
                     ),

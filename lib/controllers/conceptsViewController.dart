@@ -17,7 +17,17 @@ class ConceptsViewController extends BaseNotifier {
   List<Concept> concepts;
   Quiz test;
   int testScore = 0;
-  List<bool> testAnswers = [];
+  List<bool> testAnswers = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
   static Concept currentConcept;
   static Map<int, String> statuses = {};
   Dashboard dashboard;
@@ -89,15 +99,16 @@ class ConceptsViewController extends BaseNotifier {
     return false;
   }
 
-  changeTopicsStateToComplete({List<dynamic> topics, String state}) async {
+  Future<void> changeTopicsStateToComplete(
+      {List<dynamic> topics, String state}) async {
     setBusy();
-    User user;
+    User user = auth.user;
     if (state == "passed") {
       for (int i = 0; i < topics.length; i++) {
         user = await api.completeTopicState(
           topicID: topics[i],
           conceptID: currentConcept.id,
-          user: auth.user,
+          user: user,
           add: true,
         );
       }
@@ -128,7 +139,7 @@ class ConceptsViewController extends BaseNotifier {
     setIdle();
   }
 
-  completeConcept() async {
+  Future<void> completeConcept() async {
     setBusy();
     User user;
     user = await api.changeConceptStatusToCompleted(

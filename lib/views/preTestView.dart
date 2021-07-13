@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/controllers/topicsViewController.dart';
+import 'package:graduation_project/models/user.dart';
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/failedDialog.dart';
 import 'package:graduation_project/ui/widgets/passedDialog.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
 import 'package:graduation_project/views/topicMaterialView.dart';
+import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 
@@ -18,10 +22,30 @@ class PreTestView extends StatelessWidget {
     return FocusWidget(
       child: Scaffold(
         appBar: AppBar(
-            title: Text(
-          "Pre Test",
-          style: TextStyle(color: Colors.white),
-        )),
+          title: Text(
+            "Pre Test",
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: IconButton(
+            icon: Platform.isIOS
+                ? Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  )
+                : Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => TopicsView(
+                  topicsIDs: TopicsViewController.ids,
+                  concept: TopicsViewController.con,
+                ),
+              ),
+            ),
+          ),
+        ),
         body: BaseWidget<TopicsViewController>(
             initState: (m) => m.getPreTest(preTestID),
             model: TopicsViewController(
@@ -62,29 +86,52 @@ class PreTestView extends StatelessWidget {
                                     await model.calculatePreTestScore();
                                 List<int> numbers = model.wrongPreTestAnswers();
                                 if (passed) {
+                                  User user =
+                                      await model.api.completeTopicState(
+                                    topicID: TopicsViewController
+                                        .topics[TopicsViewController.topicIndex]
+                                        .id,
+                                    conceptID: TopicsViewController.con.id,
+                                    user: model.auth.user,
+                                  );
+                                  model.auth.setUser(user: user);
                                   showDialog(
                                     context: context,
                                     builder: (context) => Dialog(
                                       backgroundColor: Colors.transparent,
                                       child: PassedDialog(
-                                        buttonText: "Proceed to material",
-                                        backButtonText: "topics view",
-                                        wrongAnswersNums: numbers,
-                                        score: double.parse(
-                                            ((model.preTestScore /
-                                                        model.preTest
-                                                            .numOfQuestions) *
-                                                    100)
-                                                .toStringAsFixed(1)),
-                                        proceedOnPressed: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TopicMaterialView(),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                          buttonText: "Proceed to material",
+                                          backButtonText: "topics view",
+                                          wrongAnswersNums: numbers,
+                                          score: double.parse(
+                                              ((model.preTestScore /
+                                                          model.preTest
+                                                              .numOfQuestions) *
+                                                      100)
+                                                  .toStringAsFixed(1)),
+                                          proceedOnPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TopicMaterialView(),
+                                              ),
+                                            );
+                                          },
+                                          backOnPressed: () {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TopicsView(
+                                                  concept:
+                                                      TopicsViewController.con,
+                                                  topicsIDs:
+                                                      TopicsViewController
+                                                          .con.topics,
+                                                ),
+                                              ),
+                                            );
+                                          }),
                                     ),
                                   );
                                 } else {

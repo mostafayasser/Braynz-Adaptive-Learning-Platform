@@ -5,6 +5,7 @@ import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/failedFinalTestDialog.dart';
 import 'package:graduation_project/ui/widgets/passedDialog.dart';
 import 'package:graduation_project/ui/widgets/questionItem.dart';
+import 'package:graduation_project/views/conceptsView.dart';
 import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
@@ -15,10 +16,11 @@ class ConceptPreTestView extends StatelessWidget {
     return FocusWidget(
       child: Scaffold(
         appBar: AppBar(
-            title: Text(
-          "Pre Test",
-          style: TextStyle(color: Colors.white),
-        )),
+          title: Text(
+            "Pre Test",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         body: BaseWidget<ConceptsViewController>(
             initState: (m) => m.getTest(
                   ConceptsViewController.currentConcept.preTestID,
@@ -72,20 +74,24 @@ class ConceptPreTestView extends StatelessWidget {
                                               List<String> reviseTopics = model
                                                   .calculateEachTopicScore();
                                               if (passed) {
-                                                model
+                                                await model
                                                     .changeTopicsStateToComplete(
                                                   topics: ConceptsViewController
                                                       .currentConcept.topics,
                                                   state: "passed",
                                                 );
-                                                model.completeConcept();
+                                                await model.completeConcept();
+                                                ConceptsViewController.statuses[
+                                                    ConceptsViewController
+                                                        .currentConcept
+                                                        .id] = "completed";
+                                                model.getConcepts();
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) => Dialog(
                                                     backgroundColor:
                                                         Colors.transparent,
                                                     child: PassedDialog(
-                                                      conceptPreTest: true,
                                                       buttonText:
                                                           "Proceed to topics",
                                                       backButtonText:
@@ -113,6 +119,15 @@ class ConceptPreTestView extends StatelessWidget {
                                                                       .currentConcept
                                                                       .topics,
                                                             ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      backOnPressed: () {
+                                                        Navigator.of(context)
+                                                            .pushReplacement(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ConceptsView(),
                                                           ),
                                                         );
                                                       },

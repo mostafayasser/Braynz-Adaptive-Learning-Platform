@@ -48,6 +48,7 @@ class ConceptsView extends StatelessWidget {
                       onPressed: () async {
                         await model.api.endSession(model.auth.user);
                         model.auth.logout();
+
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => LoginView(),
@@ -284,7 +285,7 @@ class ConceptsView extends StatelessWidget {
                                                 Icon(
                                                   Icons.chevron_right_rounded,
                                                   color: Colors.white,
-                                                  size: 50,
+                                                  size: 40,
                                                 ),
                                               ],
                                             ),

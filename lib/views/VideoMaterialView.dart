@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:base_notifier/base_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -5,16 +7,16 @@ import 'package:graduation_project/controllers/topicsViewController.dart';
 import 'package:graduation_project/services/api/api.dart';
 import 'package:graduation_project/ui/widgets/preTestDialog.dart';
 import 'package:graduation_project/views/postTestView.dart';
+import 'package:graduation_project/views/topicMaterialView.dart';
 import 'package:graduation_project/views/topicsView.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_utils/ui_utils.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class VideoMaterialView extends StatefulWidget {
-  final videoData, index;
+  final videoData;
 
-  const VideoMaterialView({Key key, this.videoData, this.index})
-      : super(key: key);
+  const VideoMaterialView({Key key, this.videoData}) : super(key: key);
 
   @override
   _VideoMaterialViewState createState() => _VideoMaterialViewState();
@@ -40,6 +42,22 @@ class _VideoMaterialViewState extends State<VideoMaterialView> {
           centerTitle: true,
           title: Text(
             widget.videoData.name,
+          ),
+          leading: IconButton(
+            icon: Platform.isIOS
+                ? Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  )
+                : Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => TopicMaterialView(),
+              ),
+            ),
           ),
           actions: [
             FlatButton(
@@ -105,7 +123,6 @@ class _VideoMaterialViewState extends State<VideoMaterialView> {
                         initialRating: 0,
                         minRating: 1,
                         direction: Axis.horizontal,
-                        allowHalfRating: true,
                         itemCount: 5,
                         itemSize: 25,
                         itemBuilder: (context, _) => Icon(
@@ -130,11 +147,35 @@ class _VideoMaterialViewState extends State<VideoMaterialView> {
                         onPressed: () {
                           print("rate = $rate");
                           model.api.rateMaterial(
-                            index: widget.index,
+                            name: widget.videoData.name,
                             rate: rate,
                             topicID: TopicsViewController
                                 .topics[TopicsViewController.topicIndex].id,
                             type: "video",
+                          );
+                          TopicsViewController
+                              .topics[TopicsViewController.topicIndex]
+                              .material
+                              .videoMaterial
+                              .forEach((element) {
+                            if (element.name == widget.videoData.name) {
+                              if (element.rate != 0 && rate != 0)
+                                element.rate = (element.rate + rate) / 2;
+                              else if (element.rate == 0)
+                                element.rate = element.rate + rate;
+                            }
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                child: Center(
+                                    child: Text("Thanks for your rating")),
+                              ),
+                            ),
                           );
                         },
                       )
