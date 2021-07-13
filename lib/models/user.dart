@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final user = userFromJson(jsonString);
-
 import 'dart:convert';
 
 import 'package:graduation_project/models/dashboard.dart';
@@ -66,15 +62,18 @@ class UserConcept {
     this.id,
     this.muddiestPoint,
     this.topics,
+    this.state,
   });
 
   int id;
   int muddiestPoint;
   List<UserTopic> topics;
+  String state;
 
   factory UserConcept.fromJson(Map<String, dynamic> json) => UserConcept(
         id: json["id"],
         muddiestPoint: json["muddiestPoint"],
+        state: json["state"],
         topics: json["topics"] == null
             ? []
             : List<UserTopic>.from(
@@ -84,6 +83,7 @@ class UserConcept {
   Map<String, dynamic> toJson() => {
         "id": id,
         "muddiestPoint": muddiestPoint,
+        "state": state,
         "topics": List<dynamic>.from(topics.map((x) => x.toJson())),
       };
 }
@@ -99,7 +99,7 @@ class UserTopic {
     this.postTestScore,
     this.postTestAttempts,
     this.timesOfStudy,
-    this.status,
+    this.state,
   });
 
   int id;
@@ -111,7 +111,7 @@ class UserTopic {
   double postTestScore;
   int postTestAttempts;
   int timesOfStudy;
-  String status;
+  String state;
 
   factory UserTopic.fromJson(Map<String, dynamic> json) => UserTopic(
         id: json["id"],
@@ -125,7 +125,7 @@ class UserTopic {
         postTestScore: json["postTestScore"].toDouble(),
         postTestAttempts: json["postTestAttempts"],
         timesOfStudy: json["timesOfStudy"],
-        status: json["status"],
+        state: json["state"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -138,6 +138,6 @@ class UserTopic {
         "postTestScore": postTestScore,
         "postTestAttempts": postTestAttempts,
         "timesOfStudy": timesOfStudy,
-        "status": status,
+        "state": state,
       };
 }

@@ -31,8 +31,9 @@ class TopicsViewController extends BaseNotifier {
     var concept = auth.user.concepts.where((element) => element.id == con.id);
 
     for (int i = 0; i < concept.first.topics.length; i++) {
-      statuses[concept.first.topics[i].id] = concept.first.topics[i].status;
+      statuses[concept.first.topics[i].id] = concept.first.topics[i].state;
     }
+    print(statuses);
     setIdle();
   }
 

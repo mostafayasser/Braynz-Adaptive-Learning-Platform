@@ -6,6 +6,7 @@ class PassedDialog extends StatelessWidget {
       backButtonText,
       wrongAnswersNums,
       score,
+      conceptPreTest,
       conceptFinalTest;
 
   const PassedDialog({
@@ -15,6 +16,7 @@ class PassedDialog extends StatelessWidget {
     this.backButtonText,
     this.wrongAnswersNums,
     this.score,
+    this.conceptPreTest = false,
     this.conceptFinalTest = false,
   }) : super(key: key);
   @override
@@ -95,7 +97,7 @@ class PassedDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                   if (!conceptFinalTest) {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pop();
+                    if (!conceptPreTest) Navigator.of(context).pop();
                   }
                 },
               ),

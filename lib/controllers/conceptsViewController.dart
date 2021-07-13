@@ -19,11 +19,17 @@ class ConceptsViewController extends BaseNotifier {
   int testScore = 0;
   List<bool> testAnswers = [];
   static Concept currentConcept;
+  static Map<int, String> statuses = {};
   Dashboard dashboard;
 
   getConcepts() async {
     setBusy();
     concepts = await api.getConcepts();
+    var cons = auth.user.concepts;
+    for (int i = 0; i < cons.length; i++) {
+      statuses[cons[i].id] = cons[i].state;
+    }
+    print(statuses);
     setIdle();
   }
 

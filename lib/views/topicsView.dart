@@ -85,9 +85,12 @@ class TopicsView extends StatelessWidget {
                             SizedBox(
                               height: 10,
                             ),
-                            ...List.generate(
-                              TopicsViewController.topics.length,
-                              (index) => GestureDetector(
+                            ...List.generate(TopicsViewController.topics.length,
+                                (index) {
+                              print(TopicsViewController.topics[index].id);
+                              print(TopicsViewController.statuses[
+                                  TopicsViewController.topics[index].id]);
+                              return GestureDetector(
                                 onTap: () async {
                                   TopicsViewController.topicIndex = index;
                                   if (concept != null) {
@@ -136,93 +139,184 @@ class TopicsView extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.08,
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  decoration: BoxDecoration(
-                                      color: TopicsViewController.con.id == 1
-                                          ? Color(0xFFFFDAB9)
-                                          : TopicsViewController.con.id == 2
-                                              ? Color(0xFFFBC4AB)
-                                              : Color(0xFFF8AD9D),
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black26,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 0))
-                                      ]),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomLeft: Radius.circular(10)),
-                                        child: Image.network(
-                                          TopicsViewController
-                                              .topics[index].imgUrl,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.3,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height:
+                                          MediaQuery.of(context).size.height *
                                               0.08,
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
+                                      margin: EdgeInsets.only(bottom: 20),
+                                      decoration: BoxDecoration(
+                                          color: TopicsViewController.con.id ==
+                                                  1
+                                              ? Color(0xFFFFDAB9)
+                                              : TopicsViewController.con.id == 2
+                                                  ? Color(0xFFFBC4AB)
+                                                  : Color(0xFFF8AD9D),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 3,
+                                                offset: Offset(0, 0))
+                                          ]),
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                bottomLeft:
+                                                    Radius.circular(10)),
+                                            child: Image.network(
+                                              TopicsViewController
+                                                  .topics[index].imgUrl,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.3,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.08,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 0.6,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.4,
-                                                  child: Text(
-                                                    TopicsViewController
-                                                        .topics[index].name,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .subtitle1,
-                                                  ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.4,
+                                                      child: Text(
+                                                        TopicsViewController
+                                                            .topics[index].name,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .subtitle1,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(
-                                                  height: 5,
+                                                Icon(
+                                                  Icons.chevron_right_rounded,
+                                                  color: Colors.white,
+                                                  size: 50,
                                                 ),
                                               ],
                                             ),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: Colors.white,
-                                              size: 50,
-                                            ),
-                                          ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    if (TopicsViewController.statuses[
+                                            TopicsViewController
+                                                .topics[index].id] ==
+                                        "completed")
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.9,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.08,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.black.withOpacity(0.5),
+                                        ),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.check,
+                                                color: Colors.white,
+                                                size: 20,
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                "Completed",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1
+                                                    .copyWith(
+                                                        color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       )
-                                    ],
-                                  ),
+                                  ],
                                 ),
-                              ),
+                              );
+                            }),
+                            /* SizedBox(
+                              height: 10,
                             ),
+                            ExpansionTile(
+                              title: Text("Practice with Blockly"),
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Text(
+                                      "Blockly is an online editor that represents coding concepts as interlocking blocks.\nUse this tool to practice topics you have learned to see how it works."),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 70,
+                                  padding: EdgeInsets.all(10),
+                                  child: RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                    color: Theme.of(context).primaryColor,
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => BlocklyView(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "Start Practcing",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle1
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ), */
                             SizedBox(
                               height: 30,
                             ),

@@ -96,7 +96,7 @@ class HttpApi implements Api {
           "id": conceptID,
           "muddiestPoint": 0,
           "finalTestScore": 0,
-          "status": "notCompleted",
+          "state": "notCompleted",
           "finalTestAttempts": 0,
           "preTestScore": 0,
           "preTestAttempts": 0,
@@ -126,7 +126,7 @@ class HttpApi implements Api {
     print(concepts[0]["id"]);
     concepts.forEach((element) {
       if (element["id"] == conceptID) {
-        element["status"] = "completed";
+        element["state"] = "completed";
       }
     });
 
@@ -136,7 +136,11 @@ class HttpApi implements Api {
     return User.fromJson(doc.data());
   }
 
-  Future<User> addTopic({int conceptID, int topicID, User user}) async {
+  Future<User> addTopic(
+      {int conceptID,
+      int topicID,
+      User user,
+      String state = "notCompleted"}) async {
     try {
       bool found = false;
       user.concepts.forEach((element) {
@@ -158,7 +162,7 @@ class HttpApi implements Api {
           "startDateTime": 0,
           "idleTimeInMinutes": 0,
           "preTestScore": 0,
-          "state": "notCompleted",
+          "state": state,
           "preTestAttempts": 0,
           "postTestScore": 0,
           "postTestAttempts": 0,
@@ -622,7 +626,12 @@ class HttpApi implements Api {
   completeTopicState(
       {int topicID, int conceptID, User user, bool add = false}) async {
     if (add) {
-      await addTopic(topicID: topicID, conceptID: conceptID, user: user);
+      User u = await addTopic(
+          topicID: topicID,
+          conceptID: conceptID,
+          user: user,
+          state: "completed");
+      return u;
     }
     var doc = await store.collection("users").doc(user.email).get();
     int completedTopicsNum = 0;

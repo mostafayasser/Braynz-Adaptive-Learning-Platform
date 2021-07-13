@@ -85,6 +85,7 @@ class ConceptPreTestView extends StatelessWidget {
                                                     backgroundColor:
                                                         Colors.transparent,
                                                     child: PassedDialog(
+                                                      conceptPreTest: true,
                                                       buttonText:
                                                           "Proceed to topics",
                                                       backButtonText:
